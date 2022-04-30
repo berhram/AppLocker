@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">KamiLock</string>
+    <string name="app_name_schedule">BusLy</string>
+    <string name="app_name_fitness">Fi(t)ness</string>
+    <string name="face_change_dialog_title">Choose new face</string>
+    <string name="face_change_dialog_text">In purpose of security please consider of choosing non-default app icon and name.</string>
+    <string name="icon_change_success">Icon successfully changed!</string>
+    <string name="locked_apps_dialog_title">Pick apps that need to lock</string>
+    <string name="locked_apps_dialog_text">Pick apps that need to lock</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply">Apply</string>
+    <string name="notification_protecting_title">KamiLock</string>
+    <string name="notification_protecting_description">Your apps safe</string>
+    <string name="notification_permission_need_title">KamiLock</string>
+    <string name="notification_title">KamiLock</string>
+    <string name="notification_permission_need_description">Need to grant overlay permission!</string>
+</resources>
