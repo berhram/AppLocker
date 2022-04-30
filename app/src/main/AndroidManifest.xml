@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity-alias
-            android:name=".AppActivityScheduleAlias"
+            android:name=".MainActivityScheduleAlias"
             android:exported="true"
             android:targetActivity=".MainActivity"
             android:icon="@mipmap/ic_schedule"
@@ -43,7 +43,7 @@
             </intent-filter>
         </activity-alias>
         <activity-alias
-            android:name=".AppActivityFitnessAlias"
+            android:name=".MainActivityFitnessAlias"
             android:exported="true"
             android:targetActivity=".MainActivity"
             android:icon="@mipmap/ic_fitness"

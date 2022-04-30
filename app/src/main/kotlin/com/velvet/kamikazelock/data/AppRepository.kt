@@ -24,17 +24,17 @@ class AppRepository(
 
     fun changeFace(newFace: Face) {
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.AppActivity"),
+            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.MainActivity"),
             if (newFace == Face.DEFAULT) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.AppActivityScheduleAlias"),
+            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.MainActivityScheduleAlias"),
             if (newFace == Face.SCHEDULE) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.AppActivityFitnessAlias"),
+            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.MainActivityFitnessAlias"),
             if (newFace == Face.FITNESS) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )

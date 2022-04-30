@@ -7,13 +7,16 @@ import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
 import android.view.WindowManager
+import androidx.compose.runtime.Recomposer
+import androidx.compose.ui.platform.AndroidUiDispatcher
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.compositionContext
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewTreeLifecycleOwner
-import androidx.lifecycle.ViewTreeViewModelStoreOwner
+import androidx.lifecycle.*
+import androidx.savedstate.SavedStateRegistry
+import androidx.savedstate.SavedStateRegistryController
+import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED
 import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_SERVICE
@@ -26,9 +29,8 @@ import com.velvet.kamikazelock.ui.overlay.OverlayScreen
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.getViewModel
-import org.koin.core.parameter.parametersOf
 
-class AppLockerService : Service() {
+class AppLockerService : Service(), SavedStateRegistryOwner {
 
     private val serviceCache by inject<ServiceOverlayCache>()
     private val appForegroundFLow by inject<AppForegroundFlow>()
@@ -39,11 +41,11 @@ class AppLockerService : Service() {
 
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
+
     private val lockedAppPackageSet: HashSet<String> = HashSet()
     private var isOverlayShowing = false
     private var observeForegroundAppsJob: Job? = null
-    private lateinit var  composeView: ComposeView
-    private lateinit var windowManager: WindowManager
+
 
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
@@ -63,7 +65,6 @@ class AppLockerService : Service() {
         observeForegroundApp()
         observeLockedApps()
         registerScreenReceiver()
-        initializeOverlay()
         showServiceNotification()
         observePermissionChecker()
         observePassword()
@@ -119,7 +120,6 @@ class AppLockerService : Service() {
     }
 
     private fun onAppForeground(foregroundAppPackage: String) {
-        hideOverlay()
         Log.d("OVER", "$foregroundAppPackage in foreground")
         if (lockedAppPackageSet.contains(foregroundAppPackage)) {
             Log.d("OVER", "app locked")
@@ -160,48 +160,6 @@ class AppLockerService : Service() {
                     showPermissionNeedNotification()
                 }
             }
-        }
-    }
-
-    //Overlay
-
-    private fun initializeOverlay() {
-        composeView = ComposeView(this)
-        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-        val viewModelStore = ViewModelStore()
-        val lifecycleOwner = ServiceLifecycleOwner()
-        lifecycleOwner.performRestore(null)
-        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-        ViewTreeLifecycleOwner.set(composeView, lifecycleOwner)
-        ViewTreeViewModelStoreOwner.set(composeView) { viewModelStore }
-        ViewTreeSavedStateRegistryOwner.set(composeView, lifecycleOwner)
-    }
-
-    private fun showOverlay(appName: String) {
-        Log.d("OVER", "showOverlay")
-        composeView.setContent {
-            OverlayScreen(getViewModel { parametersOf(appName) })
-        }
-        windowManager.addView(
-            composeView,
-            WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                        or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                        or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                PixelFormat.TRANSLUCENT
-            )
-        )
-        isOverlayShowing = true
-    }
-
-    private fun hideOverlay() {
-        Log.d("OVER", "hideOverlay")
-        if (isOverlayShowing) {
-            isOverlayShowing = false
-            windowManager.removeViewImmediate(composeView)
         }
     }
 

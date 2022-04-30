@@ -25,8 +25,8 @@ val appModule = module {
         MainViewModel(repository = get(), appCache = get(), permissionChecker = get())
     }
 
-    viewModel { (appName : String) ->
-        OverlayViewModel(appName = appName, clientCache = get())
+    viewModel {
+        OverlayViewModel(clientCache = get())
     }
 
     single {

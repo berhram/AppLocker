@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -43,8 +44,11 @@ class PermissionChecker(private val context: Context) {
                     applicationInfo.uid, applicationInfo.packageName
                 )
             }
+            //Log.d("APPS", "permis true")
             mode == AppOpsManager.MODE_ALLOWED
+
         } catch (e: PackageManager.NameNotFoundException) {
+            Log.d("APPS", "permis false")
             false
         }
     }
