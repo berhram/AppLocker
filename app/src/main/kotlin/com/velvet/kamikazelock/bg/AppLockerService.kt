@@ -17,34 +17,32 @@ import androidx.savedstate.ViewTreeSavedStateRegistryOwner
 import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED
 import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_SERVICE
 import com.velvet.kamikazelock.bg.receiver.ScreenStateReceiver
+import com.velvet.kamikazelock.data.cache.overlay.ServiceOverlayCache
 import com.velvet.kamikazelock.data.infra.ValidationStatus
 import com.velvet.kamikazelock.data.room.LockedAppsDao
 import com.velvet.kamikazelock.data.room.PasswordDao
 import com.velvet.kamikazelock.ui.overlay.OverlayScreen
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
 class AppLockerService : Service() {
 
+    private val serviceCache by inject<ServiceOverlayCache>()
     private val appForegroundFLow by inject<AppForegroundFlow>()
     private val permissionChecker by inject<PermissionChecker>()
     private val notificationManager by inject<NotificationManager>()
     private val lockedAppsDao by inject<LockedAppsDao>()
     private val passwordDao by inject<PasswordDao>()
-    private val successFlow  by inject<MutableSharedFlow<ValidationStatus>>()
-    private val passwordFlow by inject<SharedFlow<String>>()
 
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private val lockedAppPackageSet: HashSet<String> = HashSet()
     private var isOverlayShowing = false
     private var observeForegroundAppsJob: Job? = null
-    private val windowManager: WindowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-    val composeView = ComposeView(this)
+    private lateinit var  composeView: ComposeView
+    private lateinit var windowManager: WindowManager
 
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
@@ -80,12 +78,12 @@ class AppLockerService : Service() {
 
     private fun observePassword() {
         scope.launch {
-            passwordFlow.collect {
+            serviceCache.passwordFlow.collect {
                 if (passwordDao.getPassword().realPassword == it) {
-                    successFlow.emit(ValidationStatus.SUCCESS)
+                    serviceCache.successFlow.emit(ValidationStatus.SUCCESS)
                     hideOverlay()
                 } else {
-                    successFlow.emit(ValidationStatus.FAILURE)
+                    serviceCache.successFlow.emit(ValidationStatus.FAILURE)
                 }
             }
         }
@@ -157,6 +155,8 @@ class AppLockerService : Service() {
     //Overlay
 
     private fun initializeOverlay() {
+        composeView = ComposeView(this)
+        windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val viewModelStore = ViewModelStore()
         val lifecycleOwner = ServiceLifecycleOwner()
         lifecycleOwner.performRestore(null)

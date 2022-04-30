@@ -3,21 +3,20 @@ package com.velvet.kamikazelock.data
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.util.Log
+import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.infra.Face
 import com.velvet.kamikazelock.data.infra.LockedApp
-import com.velvet.kamikazelock.data.infra.MainStatus
+import com.velvet.kamikazelock.data.infra.AppStatus
 import com.velvet.kamikazelock.data.room.LockedAppsDao
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 
 
-class AppRepository(private val packageManager: PackageManager, private val lockedAppsDao: LockedAppsDao) {
-
-    private val _status: MutableSharedFlow<MainStatus?> = MutableSharedFlow()
-    val status: SharedFlow<MainStatus?> = _status
-    private val _apps: MutableSharedFlow<List<AppInfo>> = MutableSharedFlow()
-    val apps: SharedFlow<List<AppInfo>> = _apps
+class AppRepository(
+    private val packageManager: PackageManager,
+    private val lockedAppsDao: LockedAppsDao,
+    private val appCache: RepositoryAppCache
+    ) {
 
     fun changeFace(newFace: Face) {
         packageManager.setComponentEnabledSetting(
@@ -38,7 +37,8 @@ class AppRepository(private val packageManager: PackageManager, private val lock
     }
 
     fun fetchApps() {
-        _status.tryEmit(MainStatus.FETCHING_APPS)
+        appCache.status.tryEmit(AppStatus.FETCHING_APPS)
+        Log.d("LOCK", "status emitted")
         val output = ArrayList<AppInfo>()
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -55,8 +55,9 @@ class AppRepository(private val packageManager: PackageManager, private val lock
                 )
             }
         }
-        _status.tryEmit(MainStatus.FETCH_COMPLETE)
-        _apps.tryEmit(output)
+        appCache.status.tryEmit(AppStatus.FETCH_COMPLETE)
+        appCache.apps.tryEmit(output)
+        Log.d("LOCK", "status and apps emitted")
     }
 
     fun lockApps(apps: List<AppInfo>) {

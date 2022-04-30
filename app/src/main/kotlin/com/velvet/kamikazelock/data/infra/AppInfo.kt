@@ -11,6 +11,6 @@ data class AppInfo(
     val isChanged: Boolean
 ) {
     fun toLockedApp() : LockedApp {
-        return LockedApp(name)
+        return LockedApp(packageName)
     }
 }

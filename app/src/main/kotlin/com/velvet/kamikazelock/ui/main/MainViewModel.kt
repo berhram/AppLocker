@@ -1,11 +1,13 @@
 package com.velvet.kamikazelock.ui.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.AppRepository
+import com.velvet.kamikazelock.data.cache.app.ClientAppCache
 import com.velvet.kamikazelock.data.infra.Face
-import com.velvet.kamikazelock.data.infra.MainStatus
+import com.velvet.kamikazelock.data.infra.AppStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -16,29 +18,29 @@ import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
-class MainViewModel(private val repository: AppRepository) : ViewModel(), ContainerHost<MainState, MainEffect> {
+class MainViewModel(
+    private val repository: AppRepository,
+    private val appCache: ClientAppCache
+    ) : ViewModel(), ContainerHost<MainState, MainEffect> {
+
     override val container: Container<MainState, MainEffect> = container(MainState())
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             launch {
-                repository.status.collect {
+                appCache.status.collect {
+                    Log.d("LOCK", "status collected $it")
                     when (it) {
-                        MainStatus.FETCHING_APPS -> intent { reduce { state.copy(isAppLoading = true) } }
-                        MainStatus.FETCH_COMPLETE -> intent { reduce { state.copy(isAppLoading = false) } }
+                        AppStatus.FETCHING_APPS -> intent { reduce { state.copy(isAppLoading = true) } }
+                        AppStatus.FETCH_COMPLETE -> intent { reduce { state.copy(isAppLoading = false) } }
                         null -> { }
                     }
                 }
             }
             launch {
-                repository.apps.collect {
+                appCache.apps.collect {
+                    Log.d("LOCK", "apps collected $it")
                     intent { reduce { state.copy(appList = it) } }
-                }
-            }
-            launch {
-                while (true) {
-                    repository.fetchApps()
-                    delay(5 * 1000 * 60)
                 }
             }
         }
@@ -63,13 +65,15 @@ class MainViewModel(private val repository: AppRepository) : ViewModel(), Contai
     //Lock
 
     fun appLockChoice(appInfo: AppInfo) = intent {
-        reduce { state.copy(appList = ArrayList(state.appList).apply {
-            this.add(this.indexOf(appInfo), appInfo.copy(isChanged = !appInfo.isChanged))
-            })
+        val newList = ArrayList(state.appList)
+        newList[newList.indexOf(appInfo)] = appInfo.copy(isChanged = !appInfo.isChanged)
+        reduce {
+            state.copy(appList = newList)
         }
     }
 
     fun appLockButtonClick() = intent {
+        viewModelScope.launch(Dispatchers.IO) { repository.fetchApps() }
         reduce { state.copy(isAppLockDialogEnabled = true) }
     }
 
@@ -78,6 +82,7 @@ class MainViewModel(private val repository: AppRepository) : ViewModel(), Contai
     }
 
     fun applyLock() = intent {
-        repository.lockApps(state.appList.filter { it.isChanged })
+        repository.lockApps(state.appList.filter { it.isChanged && !it.isLocked })
+        reduce { state.copy(isAppLockDialogEnabled = false) }
     }
 }

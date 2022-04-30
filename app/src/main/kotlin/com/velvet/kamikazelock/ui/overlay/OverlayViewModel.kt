@@ -2,10 +2,9 @@ package com.velvet.kamikazelock.ui.overlay
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.velvet.kamikazelock.data.cache.overlay.ClientOverlayCache
 import com.velvet.kamikazelock.data.infra.ValidationStatus
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -15,15 +14,14 @@ import org.orbitmvi.orbit.viewmodel.container
 
 class OverlayViewModel(
     private val appName: String,
-    private val successFlow: SharedFlow<ValidationStatus>,
-    private val passwordFlow: MutableSharedFlow<String>
+    private val clientCache: ClientOverlayCache
     ) : ViewModel(), ContainerHost<OverlayState, OverlayEffect> {
 
     override val container: Container<OverlayState, OverlayEffect> = container(OverlayState())
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            successFlow.collect {
+            clientCache.successFlow.collect {
                 when (it) {
                     ValidationStatus.SUCCESS -> { }
                     ValidationStatus.FAILURE -> { }
@@ -44,7 +42,7 @@ class OverlayViewModel(
 
     fun confirm() = intent {
         viewModelScope.launch(Dispatchers.IO) {
-            passwordFlow.tryEmit((state.password))
+            clientCache.passwordFlow.tryEmit((state.password))
         }
     }
 }

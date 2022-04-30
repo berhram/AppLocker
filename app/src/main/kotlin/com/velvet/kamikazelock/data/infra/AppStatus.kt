@@ -1,6 +1,6 @@
 package com.velvet.kamikazelock.data.infra
 
-enum class MainStatus {
+enum class AppStatus {
     FETCHING_APPS,
     FETCH_COMPLETE
 }

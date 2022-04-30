@@ -171,7 +171,7 @@ fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismi
             Spacer(modifier = Modifier.size(10.dp))
             Text(text = item.name, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.body1)
             Spacer(modifier = Modifier.weight(1f))
-            Checkbox(checked = item.isLocked, onCheckedChange = { onChoosing(item) })
+            Checkbox(checked = item.isChanged xor item.isLocked, onCheckedChange = { onChoosing(item) })
         }
     }
     Dialog({ onDismiss() }) {
