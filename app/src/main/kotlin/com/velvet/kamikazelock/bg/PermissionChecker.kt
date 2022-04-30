@@ -12,14 +12,21 @@ import kotlin.time.Duration
 
 class PermissionChecker(private val context: Context) {
 
-    val permissionFlow = flow {
+    val usagePermissionFlow = flow {
         while (true) {
-            delay(30 * 1000 * 60)
-            emit(!checkUsageAccessPermission())
+            emit(isUsageAccessPermissionGranted())
+            delay(1000 * 60 * 5)
         }
     }
 
-    fun checkUsageAccessPermission(): Boolean {
+    val overlayPermissionFlow = flow {
+        while (true) {
+            emit(isOverlayPermissionGranted())
+            delay(1000 * 60 * 5)
+        }
+    }
+
+    fun isUsageAccessPermissionGranted(): Boolean {
         return try {
             val packageManager = context.packageManager
             val applicationInfo = packageManager.getApplicationInfo(context.packageName, 0)
@@ -40,10 +47,7 @@ class PermissionChecker(private val context: Context) {
         } catch (e: PackageManager.NameNotFoundException) {
             false
         }
-
     }
 
-    fun checkOverlayPermission() = Settings.canDrawOverlays(context)
-
-    fun isAllPermissionChecked() = checkUsageAccessPermission() && checkOverlayPermission()
+    fun isOverlayPermissionGranted() = Settings.canDrawOverlays(context)
 }

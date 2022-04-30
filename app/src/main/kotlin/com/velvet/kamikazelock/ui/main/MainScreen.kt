@@ -33,6 +33,7 @@ import com.google.accompanist.pager.*
 import com.velvet.kamikazelock.R
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.infra.Face
+import com.velvet.kamikazelock.data.infra.TextType
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.absoluteValue
 
@@ -63,13 +64,15 @@ fun MainScreen(viewModel: MainViewModel) {
     Surface {
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Column(
-                Modifier.weight(1f).fillMaxWidth(),
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 val pagerState = rememberPagerState()
                 HorizontalPager(
-                    count = 4,
+                    count = state.infoTextList.size,
                     contentPadding = PaddingValues(start = 50.dp, end = 50.dp, top = 10.dp),
                     state = pagerState
                 ) { page ->
@@ -92,14 +95,17 @@ fun MainScreen(viewModel: MainViewModel) {
                         }
                         .padding(10.dp)
                         .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colors.primary)
+                        .background(if (state.infoTextList[page].type == TextType.WARNING) MaterialTheme.colors.error else MaterialTheme.colors.primary)
                         .aspectRatio(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
+
                         Text(
-                            text = "Text field number $page",
-                            color = MaterialTheme.colors.onPrimary
+                            text = stringResource(id = state.infoTextList[page].textId),
+                            color = if (state.infoTextList[page].type == TextType.WARNING) {
+                                MaterialTheme.colors.onError
+                            } else MaterialTheme.colors.onPrimary
                         )
                     }
                 }
@@ -155,7 +161,7 @@ fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
                 FaceItem(imageId = R.drawable.schedule, textId = R.string.app_name_schedule, face = Face.SCHEDULE)
                 FaceItem(imageId = R.drawable.fitness, textId = R.string.app_name_fitness, face = Face.FITNESS)
             }
-            OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
+            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { onDismiss() }) {
                 Text(text = stringResource(id = R.string.cancel))
             }
         }

@@ -11,7 +11,11 @@
     <string name="apply">Apply</string>
     <string name="notification_protecting_title">KamiLock</string>
     <string name="notification_protecting_description">Your apps safe</string>
-    <string name="notification_permission_need_title">KamiLock</string>
     <string name="notification_title">KamiLock</string>
-    <string name="notification_permission_need_description">Need to grant overlay permission!</string>
+    <string name="notification_permission_need_description">Need to grant permissions!</string>
+    <string name="notification_running_title">KamiLock running</string>
+    <string name="instruction">Blah-blah-blah!</string>
+    <string name="dev_contacts">my telegram: @koshkodanya</string>
+    <string name="usage_stats_warning">Please grant US p</string>
+    <string name="overlay_warning">please grant overlay perm</string>
 </resources>

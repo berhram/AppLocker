@@ -4,6 +4,7 @@ import android.app.Service
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
@@ -13,8 +14,9 @@ class AppForegroundFlow(private val context: Context, private val permissionChec
         return flow<String> {
             while (true) { delay(100) }
         }. filter {
-            permissionChecker.checkUsageAccessPermission()
+            permissionChecker.isUsageAccessPermissionGranted()
         }.map {
+            Log.d("APPS", "after filter")
             var usageEvent: UsageEvents.Event? = null
 
             val mUsageStatsManager = context.getSystemService(Service.USAGE_STATS_SERVICE) as UsageStatsManager

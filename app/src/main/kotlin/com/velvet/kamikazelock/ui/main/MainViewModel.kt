@@ -1,15 +1,17 @@
 package com.velvet.kamikazelock.ui.main
 
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.velvet.kamikazelock.data.infra.AppInfo
+import com.velvet.kamikazelock.R
+import com.velvet.kamikazelock.bg.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
 import com.velvet.kamikazelock.data.cache.app.ClientAppCache
-import com.velvet.kamikazelock.data.infra.Face
-import com.velvet.kamikazelock.data.infra.AppStatus
+import com.velvet.kamikazelock.data.infra.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -20,7 +22,8 @@ import org.orbitmvi.orbit.viewmodel.container
 
 class MainViewModel(
     private val repository: AppRepository,
-    private val appCache: ClientAppCache
+    private val appCache: ClientAppCache,
+    private val permissionChecker: PermissionChecker
     ) : ViewModel(), ContainerHost<MainState, MainEffect> {
 
     override val container: Container<MainState, MainEffect> = container(MainState())
@@ -39,8 +42,21 @@ class MainViewModel(
             }
             launch {
                 appCache.apps.collect {
-                    Log.d("LOCK", "apps collected $it")
+                    Log.d("LOCK", "apps collected")
                     intent { reduce { state.copy(appList = it) } }
+                }
+            }
+            launch { repository.observeLockedApps() }
+            launch {
+                permissionChecker.overlayPermissionFlow.collect { granted ->
+                    intent { reduce { state.copy(isOverlayPermissionNeed = !granted) } }
+                    recomposeInfoTexts()
+                }
+            }
+            launch {
+                permissionChecker.usagePermissionFlow.collect { granted ->
+                    intent { reduce { state.copy(isUsageStatsPermissionNeed = !granted) } }
+                    recomposeInfoTexts()
                 }
             }
         }
@@ -83,6 +99,27 @@ class MainViewModel(
 
     fun applyLock() = intent {
         repository.lockApps(state.appList.filter { it.isChanged && !it.isLocked })
+        repository.unlockApps(state.appList.filter { it.isChanged && it.isLocked })
         reduce { state.copy(isAppLockDialogEnabled = false) }
+        val newList = ArrayList<AppInfo>()
+        //make this a extension
+        state.appList.forEach {
+            newList.add(it.copy(isChanged = false))
+        }
+        reduce { state.copy(appList = newList) }
+    }
+
+    private fun recomposeInfoTexts() = intent {
+        val newList: ArrayList<InfoText> = ArrayList()
+        if (state.isUsageStatsPermissionNeed) {
+            newList.add(InfoText.getUsageStatsWarning())
+        }
+        if (state.isOverlayPermissionNeed) {
+            newList.add(InfoText.getOverlayWarning())
+        }
+        newList.addAll(listOf(InfoText.getInstruction(), InfoText.getDevContacts()))
+        reduce {
+            state.copy(infoTextList = newList)
+        }
     }
 }

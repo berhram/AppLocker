@@ -10,6 +10,8 @@ import com.velvet.kamikazelock.data.infra.Face
 import com.velvet.kamikazelock.data.infra.LockedApp
 import com.velvet.kamikazelock.data.infra.AppStatus
 import com.velvet.kamikazelock.data.room.LockedAppsDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 class AppRepository(
@@ -17,6 +19,8 @@ class AppRepository(
     private val lockedAppsDao: LockedAppsDao,
     private val appCache: RepositoryAppCache
     ) {
+
+    private val lockedAppPackageSet = HashSet<String>()
 
     fun changeFace(newFace: Face) {
         packageManager.setComponentEnabledSetting(
@@ -49,7 +53,7 @@ class AppRepository(
                     name = loadLabel(packageManager) as String,
                     packageName = activityInfo.packageName,
                     icon = loadIcon(packageManager),
-                    isLocked = lockedAppsDao.downloadLockedApps().contains(LockedApp(activityInfo.packageName)),
+                    isLocked = lockedAppPackageSet.contains(activityInfo.packageName).also { if (it) { Log.d("LOCK", "locked ${activityInfo.packageName}") } },
                     isChanged = false
                 )
                 )
@@ -62,7 +66,24 @@ class AppRepository(
 
     fun lockApps(apps: List<AppInfo>) {
         apps.forEach {
+            Log.d("LOCK", "${it.name} locked now")
             lockedAppsDao.lockApp(it.toLockedApp())
+        }
+    }
+
+    fun unlockApps(apps: List<AppInfo>) {
+        apps.forEach {
+            Log.d("LOCK", "${it.name} unlocked now")
+            lockedAppsDao.unlockApp(it.toLockedApp())
+        }
+    }
+
+    suspend fun observeLockedApps()  {
+        lockedAppsDao.getLockedAppsDistinctUntilChanged().collect { apps ->
+            lockedAppPackageSet.clear()
+            apps.forEach { app ->
+                lockedAppPackageSet.add(app.packageName)
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        MainViewModel(repository = get(), appCache = get())
+        MainViewModel(repository = get(), appCache = get(), permissionChecker = get())
     }
 
     viewModel { (appName : String) ->
@@ -55,7 +55,7 @@ val appModule = module {
 
     //TODO check performance factory vs single, pros and cons
 
-    single {
+    factory {
         PermissionChecker(androidContext())
     }
 

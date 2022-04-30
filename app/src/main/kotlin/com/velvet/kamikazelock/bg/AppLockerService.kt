@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.IBinder
+import android.util.Log
 import android.view.WindowManager
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.NotificationManagerCompat
@@ -96,6 +97,7 @@ class AppLockerService : Service() {
             lockedAppsDao.getLockedAppsDistinctUntilChanged().collect { apps ->
                 lockedAppPackageSet.clear()
                 apps.forEach { app ->
+                    Log.d("OVER", "${app.packageName} add to service locked apps")
                     lockedAppPackageSet.add(app.packageName)
                 }
             }
@@ -118,9 +120,16 @@ class AppLockerService : Service() {
 
     private fun onAppForeground(foregroundAppPackage: String) {
         hideOverlay()
+        Log.d("OVER", "$foregroundAppPackage in foreground")
         if (lockedAppPackageSet.contains(foregroundAppPackage)) {
-            if (permissionChecker.checkOverlayPermission()) {
+            Log.d("OVER", "app locked")
+            if (permissionChecker.isOverlayPermissionGranted()) {
+                Log.d("OVER", "showOverlay after perm")
                 showOverlay(foregroundAppPackage)
+                //TODO create one more notification for overlay perm
+                hidePermissionNeedNotification()
+            } else {
+                showPermissionNeedNotification()
             }
         }
     }
@@ -142,11 +151,13 @@ class AppLockerService : Service() {
 
     private fun observePermissionChecker() {
         scope.launch {
-            permissionChecker.permissionFlow.collect { permissionNeed ->
-                if (permissionNeed) {
-                    showPermissionNeedNotification()
+            permissionChecker.usagePermissionFlow.collect { granted ->
+                if (granted) {
+                    Log.d("APPS", "perms no need")
+                    hidePermissionNeedNotification()
                 } else {
-                    notificationManager.hidePermissionNotification()
+                    Log.d("APPS", "perms need")
+                    showPermissionNeedNotification()
                 }
             }
         }
@@ -167,6 +178,7 @@ class AppLockerService : Service() {
     }
 
     private fun showOverlay(appName: String) {
+        Log.d("OVER", "showOverlay")
         composeView.setContent {
             OverlayScreen(getViewModel { parametersOf(appName) })
         }
@@ -186,6 +198,7 @@ class AppLockerService : Service() {
     }
 
     private fun hideOverlay() {
+        Log.d("OVER", "hideOverlay")
         if (isOverlayShowing) {
             isOverlayShowing = false
             windowManager.removeViewImmediate(composeView)
@@ -202,8 +215,13 @@ class AppLockerService : Service() {
     }
 
     private fun showPermissionNeedNotification() {
+        Log.d("APPS", "show perms need notif")
         val notification = notificationManager.createPermissionNeedNotification()
         NotificationManagerCompat.from(applicationContext)
             .notify(NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED, notification)
+    }
+
+    private fun hidePermissionNeedNotification() {
+        NotificationManagerCompat.from(applicationContext).cancel(NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED)
     }
 }

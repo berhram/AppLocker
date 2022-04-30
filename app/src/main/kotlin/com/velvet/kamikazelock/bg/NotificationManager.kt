@@ -13,42 +13,33 @@ import com.velvet.kamikazelock.R
 
 class NotificationManager(private val context: Context) {
 
-    private val resultPendingIntent = PendingIntent.getActivity(
-        context, 0,
-        Intent(context, MainActivity::class.java),
-        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-    private val notification = NotificationCompat.Builder(context, CHANNEL_ID_APPLOCKER_SERVICE)
-        .setSmallIcon(R.mipmap.ic_launcher)
-        .setContentTitle(context.getString(R.string.notification_title))
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setContentIntent(resultPendingIntent)
-
-    fun createNotification(): Notification {
+    fun createNotification() : Notification {
         createAppLockerServiceChannel()
-        val serviceNotification = notification
-            .setContentText(context.getString(R.string.notification_protecting_description))
+        val serviceNotification = NotificationCompat.Builder(context, CHANNEL_ID_APPLOCKER_SERVICE)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(context.getString(R.string.notification_running_title))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(PendingIntent.getActivity(
+                context, 0,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
             .build()
-        NotificationManagerCompat.from(context).notify(
-            NOTIFICATION_ID_APPLOCKER_SERVICE,
-            serviceNotification
-        )
         return serviceNotification
     }
 
     fun createPermissionNeedNotification(): Notification {
         createAppLockerServiceChannel()
-        val permissionNotification = notification
-            .setContentText(context.getString(R.string.notification_protecting_description))
+        val permissionNotification = NotificationCompat.Builder(context, CHANNEL_ID_APPLOCKER_SERVICE)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(context.getString(R.string.notification_title))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(PendingIntent.getActivity(
+                context, 0,
+                Intent(context, MainActivity::class.java),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
+            .setContentText(context.getString(R.string.notification_permission_need_description))
             .build()
-        NotificationManagerCompat.from(context).notify(
-            NOTIFICATION_ID_APPLOCKER_SERVICE,
-            permissionNotification
-        )
         return permissionNotification
-    }
-
-    fun hidePermissionNotification(){
-        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED)
     }
 
     private fun createAppLockerServiceChannel() {
