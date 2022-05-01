@@ -48,12 +48,6 @@ class MainViewModel(
             }
             launch { repository.observeLockedApps() }
             launch {
-                permissionChecker.overlayPermissionFlow.collect { granted ->
-                    intent { reduce { state.copy(isOverlayPermissionNeed = !granted) } }
-                    recomposeInfoTexts()
-                }
-            }
-            launch {
                 permissionChecker.usagePermissionFlow.collect { granted ->
                     intent { reduce { state.copy(isUsageStatsPermissionNeed = !granted) } }
                     recomposeInfoTexts()
@@ -102,7 +96,7 @@ class MainViewModel(
         repository.unlockApps(state.appList.filter { it.isChanged && it.isLocked })
         reduce { state.copy(isAppLockDialogEnabled = false) }
         val newList = ArrayList<AppInfo>()
-        //make this a extension
+        //TODO make this a extension
         state.appList.forEach {
             newList.add(it.copy(isChanged = false))
         }
@@ -113,9 +107,6 @@ class MainViewModel(
         val newList: ArrayList<InfoText> = ArrayList()
         if (state.isUsageStatsPermissionNeed) {
             newList.add(InfoText.getUsageStatsWarning())
-        }
-        if (state.isOverlayPermissionNeed) {
-            newList.add(InfoText.getOverlayWarning())
         }
         newList.addAll(listOf(InfoText.getInstruction(), InfoText.getDevContacts()))
         reduce {

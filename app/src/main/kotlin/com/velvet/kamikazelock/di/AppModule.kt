@@ -10,7 +10,7 @@ import com.velvet.kamikazelock.data.cache.app.ClientAppCache
 import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCache
 import com.velvet.kamikazelock.data.cache.overlay.ClientOverlayCache
-import com.velvet.kamikazelock.data.cache.overlay.ServiceOverlayCache
+import com.velvet.kamikazelock.data.cache.overlay.ActivityOverlayCache
 import com.velvet.kamikazelock.data.room.AppDatabase
 import com.velvet.kamikazelock.ui.main.MainViewModel
 import com.velvet.kamikazelock.ui.overlay.OverlayViewModel
@@ -25,13 +25,13 @@ val appModule = module {
         MainViewModel(repository = get(), appCache = get(), permissionChecker = get())
     }
 
-    viewModel {
-        OverlayViewModel(clientCache = get())
+    viewModel { (appName : String) ->
+        OverlayViewModel(appPackageName = appName, clientCache = get())
     }
 
     single {
         OverlayCache()
-    }.binds(arrayOf(ServiceOverlayCache::class, ClientOverlayCache::class))
+    }.binds(arrayOf(ActivityOverlayCache::class, ClientOverlayCache::class))
 
     single {
         AppCache()

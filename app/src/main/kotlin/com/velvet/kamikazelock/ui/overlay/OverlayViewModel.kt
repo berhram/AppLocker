@@ -1,7 +1,9 @@
 package com.velvet.kamikazelock.ui.overlay
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.velvet.kamikazelock.data.AppRepository
 import com.velvet.kamikazelock.data.cache.overlay.ClientOverlayCache
 import com.velvet.kamikazelock.data.infra.ValidationStatus
 import kotlinx.coroutines.Dispatchers
@@ -13,12 +15,14 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class OverlayViewModel(
+    private val appPackageName: String,
     private val clientCache: ClientOverlayCache
     ) : ViewModel(), ContainerHost<OverlayState, OverlayEffect> {
 
     override val container: Container<OverlayState, OverlayEffect> = container(OverlayState())
 
     init {
+        Log.d("OVER", "overlay viewmodel init")
         viewModelScope.launch(Dispatchers.IO) {
             clientCache.successFlow.collect {
                 when (it) {
@@ -41,7 +45,7 @@ class OverlayViewModel(
 
     fun confirm() = intent {
         viewModelScope.launch(Dispatchers.IO) {
-            clientCache.passwordFlow.tryEmit((state.password))
+            //clientCache.passwordFlow.tryEmit((state.password))
         }
     }
 }

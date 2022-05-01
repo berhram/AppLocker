@@ -20,13 +20,6 @@ class PermissionChecker(private val context: Context) {
         }
     }
 
-    val overlayPermissionFlow = flow {
-        while (true) {
-            emit(isOverlayPermissionGranted())
-            delay(1000 * 60 * 5)
-        }
-    }
-
     fun isUsageAccessPermissionGranted(): Boolean {
         return try {
             val packageManager = context.packageManager
@@ -44,14 +37,10 @@ class PermissionChecker(private val context: Context) {
                     applicationInfo.uid, applicationInfo.packageName
                 )
             }
-            //Log.d("APPS", "permis true")
             mode == AppOpsManager.MODE_ALLOWED
-
         } catch (e: PackageManager.NameNotFoundException) {
             Log.d("APPS", "permis false")
             false
         }
     }
-
-    fun isOverlayPermissionGranted() = Settings.canDrawOverlays(context)
 }

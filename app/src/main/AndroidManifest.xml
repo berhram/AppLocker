@@ -4,8 +4,6 @@
     package="com.velvet.kamikazelock">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -24,7 +22,8 @@
         android:theme="@style/Theme.KamikazeLock">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -61,5 +60,8 @@
             </intent-filter>
         </receiver>
         <service android:name=".bg.AppLockerService" />
+        <activity
+            android:name=".OverlayActivity"
+            android:excludeFromRecents="true" />
     </application>
 </manifest>

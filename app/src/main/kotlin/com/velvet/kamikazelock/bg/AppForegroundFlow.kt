@@ -5,6 +5,7 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.util.Log
+import com.velvet.kamikazelock.OverlayActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
@@ -38,6 +39,8 @@ class AppForegroundFlow(private val context: Context, private val permissionChec
         it!!
     }.filter {
         it.className != null
+    }.filter {
+        !it.className.contains(OverlayActivity::class.java.simpleName)
     }.map {
         it.packageName
     }.distinctUntilChanged()

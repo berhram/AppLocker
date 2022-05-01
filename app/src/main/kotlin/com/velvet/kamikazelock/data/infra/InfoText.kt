@@ -16,10 +16,6 @@ data class InfoText(
             return InfoText(type = TextType.INFO, textId = R.string.dev_contacts)
         }
 
-        fun getOverlayWarning() : InfoText {
-            return InfoText(type = TextType.WARNING, textId = R.string.overlay_warning)
-        }
-
         fun getUsageStatsWarning() : InfoText {
             return InfoText(type = TextType.WARNING, textId = R.string.usage_stats_warning)
         }

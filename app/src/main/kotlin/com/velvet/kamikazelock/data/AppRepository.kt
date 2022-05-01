@@ -7,11 +7,8 @@ import android.util.Log
 import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.infra.Face
-import com.velvet.kamikazelock.data.infra.LockedApp
 import com.velvet.kamikazelock.data.infra.AppStatus
 import com.velvet.kamikazelock.data.room.LockedAppsDao
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 
 class AppRepository(

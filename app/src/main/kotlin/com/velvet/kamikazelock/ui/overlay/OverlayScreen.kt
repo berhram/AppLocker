@@ -88,13 +88,13 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    IconButton(onClick = { viewModel.enterDigit(6) }) {
+                    IconButton(onClick = { viewModel.deleteDigit() }) {
                         Icon(imageVector = Icons.Filled.Cancel, contentDescription = "Remove icon")
                     }
-                    Button(onClick = { viewModel.enterDigit(5) }) {
-                        Text(text = "5")
+                    Button(onClick = { viewModel.enterDigit(0) }) {
+                        Text(text = "0")
                     }
-                    IconButton(onClick = { viewModel.deleteDigit() }) {
+                    IconButton(onClick = { viewModel.confirm() }) {
                         Icon(imageVector = Icons.Filled.ArrowRight, contentDescription = "Enter icon")
                     }
                 }

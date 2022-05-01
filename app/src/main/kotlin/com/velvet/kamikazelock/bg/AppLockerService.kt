@@ -3,49 +3,29 @@ package com.velvet.kamikazelock.bg
 import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.PixelFormat
 import android.os.IBinder
 import android.util.Log
-import android.view.WindowManager
-import androidx.compose.runtime.Recomposer
-import androidx.compose.ui.platform.AndroidUiDispatcher
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.compositionContext
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.*
-import androidx.savedstate.SavedStateRegistry
-import androidx.savedstate.SavedStateRegistryController
-import androidx.savedstate.SavedStateRegistryOwner
-import androidx.savedstate.ViewTreeSavedStateRegistryOwner
+import com.velvet.kamikazelock.OverlayActivity
 import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED
 import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_SERVICE
 import com.velvet.kamikazelock.bg.receiver.ScreenStateReceiver
-import com.velvet.kamikazelock.data.cache.overlay.ServiceOverlayCache
-import com.velvet.kamikazelock.data.infra.ValidationStatus
 import com.velvet.kamikazelock.data.room.LockedAppsDao
-import com.velvet.kamikazelock.data.room.PasswordDao
-import com.velvet.kamikazelock.ui.overlay.OverlayScreen
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
-import org.koin.androidx.compose.getViewModel
 
-class AppLockerService : Service(), SavedStateRegistryOwner {
+class AppLockerService : Service() {
 
-    private val serviceCache by inject<ServiceOverlayCache>()
     private val appForegroundFLow by inject<AppForegroundFlow>()
     private val permissionChecker by inject<PermissionChecker>()
     private val notificationManager by inject<NotificationManager>()
     private val lockedAppsDao by inject<LockedAppsDao>()
-    private val passwordDao by inject<PasswordDao>()
-
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
-
+    private var lastForegroundAppPackage: String? = null
     private val lockedAppPackageSet: HashSet<String> = HashSet()
-    private var isOverlayShowing = false
     private var observeForegroundAppsJob: Job? = null
-
 
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
@@ -67,28 +47,12 @@ class AppLockerService : Service(), SavedStateRegistryOwner {
         registerScreenReceiver()
         showServiceNotification()
         observePermissionChecker()
-        observePassword()
     }
 
     override fun onDestroy() {
         ContextCompat.startForegroundService(applicationContext, Intent(applicationContext, AppLockerService::class.java))
         unregisterScreenReceiver()
         job.cancel()
-    }
-
-    //Password
-
-    private fun observePassword() {
-        scope.launch {
-            serviceCache.passwordFlow.collect {
-                if (passwordDao.getPassword().realPassword == it) {
-                    serviceCache.successFlow.emit(ValidationStatus.SUCCESS)
-                    hideOverlay()
-                } else {
-                    serviceCache.successFlow.emit(ValidationStatus.FAILURE)
-                }
-            }
-        }
     }
 
     //Locked apps
@@ -120,18 +84,17 @@ class AppLockerService : Service(), SavedStateRegistryOwner {
     }
 
     private fun onAppForeground(foregroundAppPackage: String) {
-        Log.d("OVER", "$foregroundAppPackage in foreground")
         if (lockedAppPackageSet.contains(foregroundAppPackage)) {
-            Log.d("OVER", "app locked")
-            if (permissionChecker.isOverlayPermissionGranted()) {
-                Log.d("OVER", "showOverlay after perm")
-                showOverlay(foregroundAppPackage)
-                //TODO create one more notification for overlay perm
-                hidePermissionNeedNotification()
+            Log.d("OVER", "$foregroundAppPackage is locked and intent send")
+            val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
+            if (lastForegroundAppPackage == applicationContext.packageName) {
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             } else {
-                showPermissionNeedNotification()
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
+            startActivity(intent)
         }
+        lastForegroundAppPackage = foregroundAppPackage
     }
 
     //Screen state receiver
