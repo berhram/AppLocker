@@ -21,16 +21,17 @@ class AppLockerService : Service() {
     private val permissionChecker by inject<PermissionChecker>()
     private val notificationManager by inject<NotificationManager>()
     private val lockedAppsDao by inject<LockedAppsDao>()
+    private var lastInvocationTime = System.currentTimeMillis()
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
-    private var lastForegroundAppPackage: String? = null
     private val lockedAppPackageSet: HashSet<String> = HashSet()
     private var observeForegroundAppsJob: Job? = null
-
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
-        onOffScreen = { stopObserveForegroundApp() }
-    )
+        onOffScreen = { stopObserveForegroundApp() })
+    companion object {
+        private const val DELAY_MILLIS = 500
+    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -84,17 +85,13 @@ class AppLockerService : Service() {
     }
 
     private fun onAppForeground(foregroundAppPackage: String) {
-        if (lockedAppPackageSet.contains(foregroundAppPackage)) {
+        if (lockedAppPackageSet.contains(foregroundAppPackage) && (System.currentTimeMillis() - lastInvocationTime) >= DELAY_MILLIS) {
             Log.d("OVER", "$foregroundAppPackage is locked and intent send")
             val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
-            if (lastForegroundAppPackage == applicationContext.packageName) {
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            } else {
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            lastInvocationTime = System.currentTimeMillis()
         }
-        lastForegroundAppPackage = foregroundAppPackage
     }
 
     //Screen state receiver
