@@ -34,7 +34,7 @@ class OverlayViewModel(
     }
 
     fun enterDigit(digit: Int) = intent {
-        if (state.password.length <= 12) {
+        if (state.password.length <= 8) {
             reduce { state.copy(password = state.password + digit) }
         }
     }

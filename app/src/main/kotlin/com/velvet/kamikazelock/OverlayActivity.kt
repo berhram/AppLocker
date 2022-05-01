@@ -7,7 +7,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.lifecycle.lifecycleScope
 import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
 import com.velvet.kamikazelock.data.cache.overlay.ActivityOverlayCache
@@ -27,7 +32,7 @@ class OverlayActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Log.d("OVER", "overlay compose set")
-            MaterialTheme {
+            MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else lightColors()) {
                 OverlayScreen(viewModel = getViewModel { parametersOf(intent.getStringExtra(KEY_PACKAGE_NAME)) })
             }
         }
