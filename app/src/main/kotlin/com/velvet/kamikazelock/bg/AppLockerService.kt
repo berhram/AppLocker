@@ -17,7 +17,7 @@ import org.koin.android.ext.android.inject
 
 class AppLockerService : Service() {
 
-    private val appForegroundFLow by inject<AppForegroundFlow>()
+    private val appForegroundFLow by inject<CurrentAppChecker>()
     private val permissionChecker by inject<PermissionChecker>()
     private val notificationManager by inject<NotificationManager>()
     private val lockedAppsDao by inject<LockedAppsDao>()

@@ -1,16 +1,12 @@
 package com.velvet.kamikazelock.di
 
 import androidx.room.Room
-import com.velvet.kamikazelock.bg.AppForegroundFlow
+import com.velvet.kamikazelock.bg.CurrentAppChecker
 import com.velvet.kamikazelock.bg.NotificationManager
 import com.velvet.kamikazelock.bg.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
 import com.velvet.kamikazelock.data.cache.app.AppCache
-import com.velvet.kamikazelock.data.cache.app.ClientAppCache
-import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCache
-import com.velvet.kamikazelock.data.cache.overlay.ClientOverlayCache
-import com.velvet.kamikazelock.data.cache.overlay.ActivityOverlayCache
 import com.velvet.kamikazelock.data.room.AppDatabase
 import com.velvet.kamikazelock.ui.main.MainViewModel
 import com.velvet.kamikazelock.ui.overlay.OverlayViewModel
@@ -50,7 +46,7 @@ val appModule = module {
     }
 
     single {
-        AppForegroundFlow(context = androidContext(), permissionChecker = get())
+        CurrentAppChecker(context = androidContext(), permissionChecker = get())
     }
 
     //TODO check performance factory vs single, pros and cons

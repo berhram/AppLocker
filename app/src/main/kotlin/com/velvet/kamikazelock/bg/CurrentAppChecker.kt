@@ -12,14 +12,19 @@ import com.velvet.kamikazelock.OverlayActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
-class AppForegroundFlow(private val context: Context, private val permissionChecker: PermissionChecker) {
+class CurrentAppChecker(private val context: Context, private val permissionChecker: PermissionChecker) {
+
+    companion object {
+        private const val CHECK_APP_DELAY_MILLIS = 250L
+        private const val CHECK_IN_APPS_OPENED_LAST_MILLIS = 1000 * 3600
+    }
 
     fun get(): Flow<String> = flow {
         while (true) {
             if (permissionChecker.isUsageAccessPermissionGranted()) {
                 emit(Unit)
             }
-            delay(100)
+            delay(CHECK_APP_DELAY_MILLIS)
         }
     }.map {
         val pkgName = getCurrentAppPackageName()
@@ -31,7 +36,7 @@ class AppForegroundFlow(private val context: Context, private val permissionChec
         val mUsageStatsManager = context.getSystemService(Service.USAGE_STATS_SERVICE)
                 as UsageStatsManager
         val time = System.currentTimeMillis()
-        val usageEvents = mUsageStatsManager.queryEvents(time - 1000 * 3600, time)
+        val usageEvents = mUsageStatsManager.queryEvents(time - CHECK_IN_APPS_OPENED_LAST_MILLIS, time)
         while (usageEvents.hasNextEvent()) {
             val event = UsageEvents.Event()
             usageEvents.getNextEvent(event)

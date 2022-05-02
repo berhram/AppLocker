@@ -7,11 +7,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Dao
 interface LockedAppsDao {
-
-    @Query("SELECT * FROM locked_app")
-    fun downloadLockedApps() : List<LockedApp>
-
-    @Query("SELECT * FROM locked_app")
+        @Query("SELECT * FROM locked_app")
     fun getLockedApps(): Flow<List<LockedApp>>
 
     fun getLockedAppsDistinctUntilChanged() = getLockedApps().distinctUntilChanged()

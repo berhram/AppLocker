@@ -1,40 +1,29 @@
 package com.velvet.kamikazelock.ui.overlay
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.velvet.kamikazelock.data.AppRepository
-import com.velvet.kamikazelock.data.cache.overlay.ClientOverlayCache
-import com.velvet.kamikazelock.data.infra.ValidationStatus
+import com.velvet.kamikazelock.data.cache.overlay.OverlayCacheContract
+import com.velvet.kamikazelock.data.infra.Password
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class OverlayViewModel(
     private val appPackageName: String,
-    private val clientCache: ClientOverlayCache
+    private val clientCache: OverlayCacheContract.UiCache
     ) : ViewModel(), ContainerHost<OverlayState, OverlayEffect> {
 
     override val container: Container<OverlayState, OverlayEffect> = container(OverlayState())
 
-    init {
-        Log.d("OVER", "overlay viewmodel init")
-        viewModelScope.launch(Dispatchers.IO) {
-            clientCache.successFlow.collect {
-                when (it) {
-                    ValidationStatus.SUCCESS -> { }
-                    ValidationStatus.FAILURE -> { }
-                }
-            }
-        }
-    }
+
 
     fun enterDigit(digit: Int) = intent {
-        if (state.password.length <= 8) {
+        if (state.password.length <= Password.MAX_PASSWORD_LENGTH) {
             reduce { state.copy(password = state.password + digit) }
         }
     }
@@ -45,7 +34,11 @@ class OverlayViewModel(
 
     fun confirm() = intent {
         viewModelScope.launch(Dispatchers.IO) {
-            //clientCache.passwordFlow.tryEmit((state.password))
+            if (state.password.length >= Password.MIN_PASSWORD_LENGTH) {
+                clientCache.passwordFlow.tryEmit(state.password)
+            } else {
+                postSideEffect(OverlayEffect.PasswordTooShort)
+            }
         }
     }
 }

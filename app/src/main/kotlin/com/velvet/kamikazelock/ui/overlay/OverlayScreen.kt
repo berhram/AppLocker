@@ -1,5 +1,6 @@
 package com.velvet.kamikazelock.ui.overlay
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -13,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.velvet.kamikazelock.R
+import com.velvet.kamikazelock.ui.main.MainEffect
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -22,14 +25,14 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
     LaunchedEffect(viewModel) {
         viewModel.container.sideEffectFlow.collectLatest {
             when (it) {
-
+                OverlayEffect.PasswordTooShort -> Toast.makeText(context, R.string.password_too_short, Toast.LENGTH_LONG).show()
             }
         }
     }
     Surface {
         Column(Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.4f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -37,15 +40,15 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(modifier = Modifier.clip(MaterialTheme.shapes.medium).background(MaterialTheme.colors.primary), text = state.password, style = MaterialTheme.typography.h3, color = MaterialTheme.colors.onPrimary)
+                    Text(text = state.password, style = MaterialTheme.typography.h3, color = MaterialTheme.colors.onBackground)
                 }
             }
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.6f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                val buttonSize = 60.dp
+                val buttonSize = 65.dp
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,

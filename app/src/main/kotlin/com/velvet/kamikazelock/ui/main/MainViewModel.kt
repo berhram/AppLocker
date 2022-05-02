@@ -1,17 +1,12 @@
 package com.velvet.kamikazelock.ui.main
 
 import android.util.Log
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.velvet.kamikazelock.R
 import com.velvet.kamikazelock.bg.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
-import com.velvet.kamikazelock.data.cache.app.ClientAppCache
 import com.velvet.kamikazelock.data.infra.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost

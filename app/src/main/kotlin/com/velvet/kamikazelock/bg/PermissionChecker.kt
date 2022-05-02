@@ -13,11 +13,33 @@ import kotlin.time.Duration
 
 class PermissionChecker(private val context: Context) {
 
+    companion object {
+        private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 5L
+    }
+
     val usagePermissionFlow = flow {
         while (true) {
             emit(isUsageAccessPermissionGranted())
-            delay(1000 * 60 * 5)
+            delay(PERMISSION_CHECK_DELAY_MILLIS)
         }
+    }
+
+    val overlayPermissionFlow = flow {
+        while (true) {
+            emit(isOverlayPermissionGranted())
+            delay(PERMISSION_CHECK_DELAY_MILLIS)
+        }
+    }
+
+    val allPermissionFlow = flow {
+        while (true) {
+            emit(isOverlayPermissionGranted() && isUsageAccessPermissionGranted())
+            delay(PERMISSION_CHECK_DELAY_MILLIS)
+        }
+    }
+
+    fun isOverlayPermissionGranted() : Boolean {
+        return Settings.canDrawOverlays(context)
     }
 
     fun isUsageAccessPermissionGranted(): Boolean {

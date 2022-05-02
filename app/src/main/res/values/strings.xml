@@ -18,4 +18,7 @@
     <string name="dev_contacts">my telegram: @koshkodanya</string>
     <string name="usage_stats_warning">Please grant US p</string>
     <string name="overlay_warning">please grant overlay perm</string>
+    <string name="password_not_created">Set password or app will not work!</string>
+    <string name="password_too_short">Password too short!</string>
+    <string name="wrong_password">Wrong password!</string>
 </resources>

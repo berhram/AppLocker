@@ -4,17 +4,16 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
-import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
+import com.velvet.kamikazelock.data.cache.app.AppCacheContract
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.infra.Face
-import com.velvet.kamikazelock.data.infra.AppStatus
 import com.velvet.kamikazelock.data.room.LockedAppsDao
 
 
 class AppRepository(
     private val packageManager: PackageManager,
     private val lockedAppsDao: LockedAppsDao,
-    private val appCache: RepositoryAppCache
+    private val appCache: AppCacheContract.RepositoryCache
     ) {
 
     private val lockedAppPackageSet = HashSet<String>()
@@ -38,8 +37,6 @@ class AppRepository(
     }
 
     fun fetchApps() {
-        appCache.status.tryEmit(AppStatus.FETCHING_APPS)
-        Log.d("LOCK", "status emitted")
         val output = ArrayList<AppInfo>()
         val intent = Intent(Intent.ACTION_MAIN, null)
         intent.addCategory(Intent.CATEGORY_LAUNCHER)
@@ -50,27 +47,23 @@ class AppRepository(
                     name = loadLabel(packageManager) as String,
                     packageName = activityInfo.packageName,
                     icon = loadIcon(packageManager),
-                    isLocked = lockedAppPackageSet.contains(activityInfo.packageName).also { if (it) { Log.d("LOCK", "locked ${activityInfo.packageName}") } },
+                    isLocked = lockedAppPackageSet.contains(activityInfo.packageName),
                     isChanged = false
                 )
                 )
             }
         }
-        appCache.status.tryEmit(AppStatus.FETCH_COMPLETE)
         appCache.apps.tryEmit(output)
-        Log.d("LOCK", "status and apps emitted")
     }
 
     fun lockApps(apps: List<AppInfo>) {
         apps.forEach {
-            Log.d("LOCK", "${it.name} locked now")
             lockedAppsDao.lockApp(it.toLockedApp())
         }
     }
 
     fun unlockApps(apps: List<AppInfo>) {
         apps.forEach {
-            Log.d("LOCK", "${it.name} unlocked now")
             lockedAppsDao.unlockApp(it.toLockedApp())
         }
     }

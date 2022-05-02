@@ -1,21 +1,21 @@
 package com.velvet.kamikazelock
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInstaller
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.lifecycle.lifecycleScope
-import com.velvet.kamikazelock.data.cache.app.RepositoryAppCache
-import com.velvet.kamikazelock.data.cache.overlay.ActivityOverlayCache
+import com.velvet.kamikazelock.data.cache.overlay.OverlayCacheContract
 import com.velvet.kamikazelock.data.infra.ValidationStatus
 import com.velvet.kamikazelock.ui.overlay.OverlayScreen
 import kotlinx.coroutines.Dispatchers
@@ -24,9 +24,10 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
+
 class OverlayActivity : ComponentActivity() {
 
-    private val cache: ActivityOverlayCache by inject()
+    private val cache by inject<OverlayCacheContract.ActivityCache>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +38,26 @@ class OverlayActivity : ComponentActivity() {
             }
         }
         lifecycleScope.launch(Dispatchers.IO) {
-            cache.successFlow.collect {
+            cache.statusFlow.collect {
                 when (it) {
-                    ValidationStatus.SUCCESS -> {
+                    ValidationStatus.SUCCESS_REAL_PASSWORD -> {
                         setResult(Activity.RESULT_OK)
                         finish()
                     }
+                    ValidationStatus.SUCCESS_FAKE_PASSWORD -> {
+                        uninstallApp()
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    }
+                    ValidationStatus.FAILURE_NO_PASSWORD_SET -> {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                        Toast.makeText(applicationContext, R.string.password_not_created, Toast.LENGTH_LONG).show()
+                    }
+                    ValidationStatus.FAILURE_WRONG_PASSWORD -> {
+                        Toast.makeText(applicationContext, R.string.wrong_password, Toast.LENGTH_LONG).show()
+                    }
+                    null -> {  }
                 }
             }
         }
@@ -56,6 +71,15 @@ class OverlayActivity : ComponentActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         finish()
+    }
+
+    private fun uninstallApp() {
+        this.packageManager.packageInstaller.uninstall(
+            intent.getStringExtra(KEY_PACKAGE_NAME)!!,
+            PendingIntent.getActivity(
+                this, 0,
+                Intent(applicationContext, applicationContext.javaClass),
+                PendingIntent.FLAG_IMMUTABLE).intentSender)
     }
 
     companion object {
