@@ -1,6 +1,7 @@
 package com.velvet.kamikazelock.ui.main
 
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,20 +46,32 @@ fun MainScreen(viewModel: MainViewModel) {
     LaunchedEffect(viewModel) {
         viewModel.container.sideEffectFlow.collectLatest {
             when (it) {
-                is MainEffect.IconChanged -> Toast.makeText(context, R.string.icon_change_success, Toast.LENGTH_LONG).show()
+                is MainEffect.IconChanged -> {
+                    Toast.makeText(context, R.string.icon_change_success, Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
     if (state.isChangeFaceDialogEnabled) {
-        FacesDialog(onChoosing = { viewModel.faceChangeChoice(it) }, onDismiss = { viewModel.faceChangeDialogDismiss() })
+        PasswordChangeDialog(
+            onDismiss = { viewModel.passwordDialogSwitch() },
+            newTruePassword = state.newTruePassword,
+            newFalsePassword = state.newFalsePassword,
+            onNewTruePasswordChange = { viewModel.onNewTruePasswordChange(it) },
+            onNewFalsePasswordChange = { viewModel.onNewFalsePasswordChange(it) },
+            setNewPassword = { newTrue, newFalse -> viewModel.setNewPassword(newTrue, newFalse) },
+            errorTextId = state.newPasswordErrorTextId
+        )
+    }
+    if (state.isChangeFaceDialogEnabled) {
+        FacesDialog(onChoosing = { viewModel.faceChangeChoice(it) }, onDismiss = { viewModel.faceChangeSwitch() })
     }
     if (state.isAppLockDialogEnabled) {
         AppListDialog(
             appList = state.appList,
             onChoosing = { viewModel.appLockChoice(it) },
-            onDismiss = { viewModel.appLockDialogDismiss() },
-            onApply = { viewModel.applyLock() },
-            isLoading = state.isAppLoading
+            onDismiss = { viewModel.appLockDialogSwitch() },
+            onApply = { viewModel.applyLock() }
         )
     }
     Surface {
@@ -118,13 +131,13 @@ fun MainScreen(viewModel: MainViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Button(modifier = Modifier.width(200.dp), onClick = { viewModel.appLockButtonClick() }) {
+                Button(modifier = Modifier.width(200.dp), onClick = { viewModel.appLockDialogSwitch() }) {
                     Text(text = "Locked apps")
                 }
                 Button(modifier = Modifier.width(200.dp), onClick = { /*TODO*/ }) {
                     Text(text = "Test button 2")
                 }
-                Button(modifier = Modifier.width(200.dp), onClick = { viewModel.faceChangeButtonClick() }) {
+                Button(modifier = Modifier.width(200.dp), onClick = { viewModel.faceChangeSwitch() }) {
                     Text(text = "Change Face")
                 }
             }
@@ -169,7 +182,7 @@ fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
 }
 
 @Composable
-fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismiss: () -> Unit, onApply: () -> Unit, isLoading: Boolean) {
+fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismiss: () -> Unit, onApply: () -> Unit) {
     @Composable
     fun AppItem(item: AppInfo) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -199,7 +212,7 @@ fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismi
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                if (appList.isEmpty() || isLoading) {
+                if (appList.isEmpty()) {
                     item {
                         DotsPulsing(size = 20.dp, delayUnit = 300)
                     }
@@ -257,5 +270,45 @@ fun DotsPulsing(size: Dp, delayUnit: Int) {
         Dot(scale2)
         Spacer(Modifier.width(spaceSize))
         Dot(scale3)
+    }
+}
+
+@Composable
+fun PasswordChangeDialog(
+    onDismiss: () -> Unit,
+    newTruePassword: String,
+    newFalsePassword: String,
+    onNewTruePasswordChange: (String) -> Unit,
+    onNewFalsePasswordChange: (String) -> Unit,
+    setNewPassword: (String, String) -> Unit,
+    @StringRes errorTextId: Int?
+) {
+    Dialog({ onDismiss() }) {
+        Column(
+            Modifier
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colors.background)
+                .padding(10.dp)
+        ) {
+            Text(text = stringResource(id = R.string.change_password_dialog_title), style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
+            Spacer(modifier = Modifier.size(10.dp))
+            Text(text = stringResource(id = R.string.change_password_dialog_text), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground)
+            Spacer(modifier = Modifier.size(10.dp))
+            if (errorTextId != null) {
+                Text(text = stringResource(id = errorTextId), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.error)
+                Spacer(modifier = Modifier.size(10.dp))
+            }
+            OutlinedTextField(value = newTruePassword, onValueChange = { onNewTruePasswordChange(it) }, singleLine = true, label = { Text(text =  stringResource(R.string.true_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
+            OutlinedTextField(value = newFalsePassword, onValueChange = { onNewFalsePasswordChange(it) }, singleLine = true, label = { Text(text =  stringResource(R.string.false_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
+                Spacer(modifier = Modifier.size(10.dp))
+                Button(modifier = Modifier.weight(1f), onClick = { setNewPassword(newTruePassword, newFalsePassword) }) {
+                    Text(text = stringResource(id = R.string.apply))
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.velvet.kamikazelock.data.infra
 
 import android.graphics.drawable.Drawable
-import com.velvet.kamikazelock.data.infra.LockedApp
 
 data class AppInfo(
     val name: String,

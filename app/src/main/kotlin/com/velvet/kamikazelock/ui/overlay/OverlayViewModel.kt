@@ -20,8 +20,6 @@ class OverlayViewModel(
 
     override val container: Container<OverlayState, OverlayEffect> = container(OverlayState())
 
-
-
     fun enterDigit(digit: Int) = intent {
         if (state.password.length <= Password.MAX_PASSWORD_LENGTH) {
             reduce { state.copy(password = state.password + digit) }

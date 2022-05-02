@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.velvet.kamikazelock.OverlayActivity
@@ -63,7 +62,6 @@ class AppLockerService : Service() {
             lockedAppsDao.getLockedAppsDistinctUntilChanged().collect { apps ->
                 lockedAppPackageSet.clear()
                 apps.forEach { app ->
-                    Log.d("OVER", "${app.packageName} add to service locked apps")
                     lockedAppPackageSet.add(app.packageName)
                 }
             }
@@ -86,7 +84,6 @@ class AppLockerService : Service() {
 
     private fun onAppForeground(foregroundAppPackage: String) {
         if (lockedAppPackageSet.contains(foregroundAppPackage) && (System.currentTimeMillis() - lastInvocationTime) >= DELAY_MILLIS) {
-            Log.d("OVER", "$foregroundAppPackage is locked and intent send")
             val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -111,12 +108,10 @@ class AppLockerService : Service() {
 
     private fun observePermissionChecker() {
         scope.launch {
-            permissionChecker.usagePermissionFlow.collect { granted ->
+            permissionChecker.allPermissionFlow.collect { granted ->
                 if (granted) {
-                    Log.d("APPS", "perms no need")
                     hidePermissionNeedNotification()
                 } else {
-                    Log.d("APPS", "perms need")
                     showPermissionNeedNotification()
                 }
             }
@@ -133,7 +128,6 @@ class AppLockerService : Service() {
     }
 
     private fun showPermissionNeedNotification() {
-        Log.d("APPS", "show perms need notif")
         val notification = notificationManager.createPermissionNeedNotification()
         NotificationManagerCompat.from(applicationContext)
             .notify(NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED, notification)

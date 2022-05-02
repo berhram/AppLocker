@@ -1,7 +1,6 @@
 package com.velvet.kamikazelock.ui.overlay
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -11,11 +10,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.velvet.kamikazelock.R
-import com.velvet.kamikazelock.ui.main.MainEffect
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

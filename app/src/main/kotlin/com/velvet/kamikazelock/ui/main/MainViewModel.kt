@@ -1,10 +1,13 @@
 package com.velvet.kamikazelock.ui.main
 
-import android.util.Log
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.velvet.kamikazelock.*
 import com.velvet.kamikazelock.bg.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
+import com.velvet.kamikazelock.data.PasswordRepository
+import com.velvet.kamikazelock.data.cache.app.AppCacheContract
 import com.velvet.kamikazelock.data.infra.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,9 +19,10 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class MainViewModel(
-    private val repository: AppRepository,
-    private val appCache: ClientAppCache,
-    private val permissionChecker: PermissionChecker
+    private val appRepository: AppRepository,
+    private val appCache: AppCacheContract.UiCache,
+    private val permissionChecker: PermissionChecker,
+    private val passwordRepository: PasswordRepository
     ) : ViewModel(), ContainerHost<MainState, MainEffect> {
 
     override val container: Container<MainState, MainEffect> = container(MainState())
@@ -26,25 +30,20 @@ class MainViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             launch {
-                appCache.status.collect {
-                    Log.d("LOCK", "status collected $it")
-                    when (it) {
-                        AppStatus.FETCHING_APPS -> intent { reduce { state.copy(isAppLoading = true) } }
-                        AppStatus.FETCH_COMPLETE -> intent { reduce { state.copy(isAppLoading = false) } }
-                        null -> { }
-                    }
-                }
-            }
-            launch {
                 appCache.apps.collect {
-                    Log.d("LOCK", "apps collected")
                     intent { reduce { state.copy(appList = it) } }
                 }
             }
-            launch { repository.observeLockedApps() }
+            launch { appRepository.observeLockedApps() }
             launch {
                 permissionChecker.usagePermissionFlow.collect { granted ->
-                    intent { reduce { state.copy(isUsageStatsPermissionNeed = !granted) } }
+                    intent { reduce { state.copy(isUsageStatsPermissionGranted = granted) } }
+                    recomposeInfoTexts()
+                }
+            }
+            launch {
+                permissionChecker.overlayPermissionFlow.collect { granted ->
+                    intent { reduce { state.copy(isOverlayPermissionGranted = granted) } }
                     recomposeInfoTexts()
                 }
             }
@@ -54,54 +53,81 @@ class MainViewModel(
     //Face
 
     fun faceChangeChoice(newFace: Face) = intent {
-        repository.changeFace(newFace)
+        appRepository.changeFace(newFace)
         reduce { state.copy(isChangeFaceDialogEnabled = false) }
         postSideEffect(MainEffect.IconChanged)
     }
 
-    fun faceChangeButtonClick() = intent {
-        reduce { state.copy(isChangeFaceDialogEnabled = true) }
-    }
-
-    fun faceChangeDialogDismiss() = intent {
-        reduce { state.copy(isChangeFaceDialogEnabled = false) }
+    fun faceChangeSwitch() = intent {
+        reduce { state.copy(isChangeFaceDialogEnabled = !state.isChangeFaceDialogEnabled) }
     }
 
     //Lock
 
     fun appLockChoice(appInfo: AppInfo) = intent {
-        val newList = ArrayList(state.appList)
-        newList[newList.indexOf(appInfo)] = appInfo.copy(isChanged = !appInfo.isChanged)
-        reduce {
-            state.copy(appList = newList)
+        reduce { state.copy(appList = state.appList.onAppLockChoice(appInfo)) }
+    }
+
+    fun appLockDialogSwitch() = intent {
+        if (state.isAppLockDialogEnabled) {
+            reduce { state.copy(isAppLockDialogEnabled = false) }
+        } else {
+            reduce { state.copy(isAppLockDialogEnabled = true, appList = emptyList()) }
+            viewModelScope.launch(Dispatchers.IO) { appRepository.fetchApps() }
         }
-    }
-
-    fun appLockButtonClick() = intent {
-        viewModelScope.launch(Dispatchers.IO) { repository.fetchApps() }
-        reduce { state.copy(isAppLockDialogEnabled = true) }
-    }
-
-    fun appLockDialogDismiss() = intent {
-        reduce { state.copy(isAppLockDialogEnabled = false) }
     }
 
     fun applyLock() = intent {
-        repository.lockApps(state.appList.filter { it.isChanged && !it.isLocked })
-        repository.unlockApps(state.appList.filter { it.isChanged && it.isLocked })
-        reduce { state.copy(isAppLockDialogEnabled = false) }
-        val newList = ArrayList<AppInfo>()
-        //TODO make this a extension
-        state.appList.forEach {
-            newList.add(it.copy(isChanged = false))
+        appRepository.lockApps(state.appList.filter { it.isChanged && !it.isLocked })
+        appRepository.unlockApps(state.appList.filter { it.isChanged && it.isLocked })
+        reduce { state.copy(
+            isAppLockDialogEnabled = false,
+            appList = state.appList.resetEnabledStates())
         }
-        reduce { state.copy(appList = newList) }
     }
+
+    //Password change
+
+    fun passwordDialogSwitch() = intent {
+        if (state.isChangePasswordDialogEnabled) {
+            reduce { state.resetAndClosePasswordDialog() }
+        } else {
+            reduce { state.copy(isChangePasswordDialogEnabled = true) }
+        }
+    }
+
+    fun onNewTruePasswordChange(newTruePassword: String) = intent {
+        reduce { state.copy(newTruePassword = newTruePassword) }
+    }
+
+    fun onNewFalsePasswordChange(newFalsePassword: String) = intent {
+        reduce { state.copy(newFalsePassword = newFalsePassword) }
+    }
+
+    fun setNewPassword(newTruePassword: String, newFalsePassword: String) = intent {
+        if (newFalsePassword.length >= Password.MAX_PASSWORD_LENGTH || newTruePassword.length >= Password.MAX_PASSWORD_LENGTH) {
+            reduce { state.copy(newPasswordErrorTextId = R.string.too_long) }
+        } else if (newFalsePassword.length <= Password.MAX_PASSWORD_LENGTH || newTruePassword.length <= Password.MIN_PASSWORD_LENGTH) {
+            reduce { state.copy(newPasswordErrorTextId = R.string.password_too_short) }
+        } else if (!newFalsePassword.isDigitsOnly() || !newTruePassword.isDigitsOnly()) {
+            reduce { state.copy(newPasswordErrorTextId = R.string.password_not_digits) }
+        } else if (newFalsePassword == newTruePassword) {
+            reduce { state.copy(newPasswordErrorTextId = R.string.passwords_same) }
+        } else {
+            passwordRepository.setNewPassword(newTrue = newTruePassword, newFalse = newFalsePassword)
+            passwordDialogSwitch()
+        }
+    }
+
+    //Infra
 
     private fun recomposeInfoTexts() = intent {
         val newList: ArrayList<InfoText> = ArrayList()
-        if (state.isUsageStatsPermissionNeed) {
+        if (!state.isUsageStatsPermissionGranted) {
             newList.add(InfoText.getUsageStatsWarning())
+        }
+        if (!state.isOverlayPermissionGranted) {
+            newList.add(InfoText.getOverlayWarning())
         }
         newList.addAll(listOf(InfoText.getInstruction(), InfoText.getDevContacts()))
         reduce {

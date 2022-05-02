@@ -19,5 +19,9 @@ data class InfoText(
         fun getUsageStatsWarning() : InfoText {
             return InfoText(type = TextType.WARNING, textId = R.string.usage_stats_warning)
         }
+
+        fun getOverlayWarning() : InfoText {
+            return InfoText(type = TextType.WARNING, textId = R.string.overlay_warning)
+        }
     }
 }

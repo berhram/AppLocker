@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "password")
 data class Password(
     @PrimaryKey val id: Long,
-    val realPassword: String,
-    val fakePassword: String
+    val truePassword: String,
+    val falsePassword: String
 ) {
     companion object {
         const val MIN_PASSWORD_LENGTH = 4

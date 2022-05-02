@@ -6,9 +6,6 @@ import android.app.usage.UsageEvents.Event.*
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.os.Build
-import android.util.Log
-import com.velvet.kamikazelock.BuildConfig
-import com.velvet.kamikazelock.OverlayActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
@@ -31,7 +28,7 @@ class CurrentAppChecker(private val context: Context, private val permissionChec
         pkgName
     }.filter { it != null }.map { it!! }.distinctUntilChanged()
 
-    fun getCurrentAppPackageName(): String? {
+    private fun getCurrentAppPackageName(): String? {
         var pkgName: String? = null
         val mUsageStatsManager = context.getSystemService(Service.USAGE_STATS_SERVICE)
                 as UsageStatsManager

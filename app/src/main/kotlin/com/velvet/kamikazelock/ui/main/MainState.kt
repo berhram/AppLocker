@@ -1,17 +1,21 @@
 package com.velvet.kamikazelock.ui.main
 
-import com.velvet.kamikazelock.R
+import androidx.annotation.StringRes
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.infra.InfoText
-import com.velvet.kamikazelock.data.infra.TextType
 
 data class MainState(
-    val isChangeKeyDialogEnabled: Boolean = false,
+    val isChangePasswordDialogEnabled: Boolean = false,
     val isChangeFaceDialogEnabled: Boolean = false,
     val isAppLockDialogEnabled: Boolean = false,
+
     val appList: List<AppInfo> = emptyList(),
-    val isAppLoading: Boolean = false,
-    val isOverlayPermissionNeed: Boolean = false,
-    val isUsageStatsPermissionNeed: Boolean = false,
-    val infoTextList: List<InfoText> = listOf()
+    val infoTextList: List<InfoText> = listOf(),
+
+    val isOverlayPermissionGranted: Boolean = true,
+    val isUsageStatsPermissionGranted: Boolean = true,
+
+    val newTruePassword: String = "",
+    val newFalsePassword: String = "",
+    @StringRes val newPasswordErrorTextId: Int? = null
 )

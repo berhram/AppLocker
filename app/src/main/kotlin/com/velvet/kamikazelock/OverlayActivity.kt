@@ -4,9 +4,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInstaller
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,7 +30,6 @@ class OverlayActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Log.d("OVER", "overlay compose set")
             MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else lightColors()) {
                 OverlayScreen(viewModel = getViewModel { parametersOf(intent.getStringExtra(KEY_PACKAGE_NAME)) })
             }

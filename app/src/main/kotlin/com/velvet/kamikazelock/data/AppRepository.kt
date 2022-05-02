@@ -3,7 +3,6 @@ package com.velvet.kamikazelock.data
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import com.velvet.kamikazelock.data.cache.app.AppCacheContract
 import com.velvet.kamikazelock.data.infra.AppInfo
 import com.velvet.kamikazelock.data.infra.Face

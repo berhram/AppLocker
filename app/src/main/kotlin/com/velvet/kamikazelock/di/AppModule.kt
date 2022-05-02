@@ -5,8 +5,11 @@ import com.velvet.kamikazelock.bg.CurrentAppChecker
 import com.velvet.kamikazelock.bg.NotificationManager
 import com.velvet.kamikazelock.bg.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
+import com.velvet.kamikazelock.data.PasswordRepository
 import com.velvet.kamikazelock.data.cache.app.AppCache
+import com.velvet.kamikazelock.data.cache.app.AppCacheContract
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCache
+import com.velvet.kamikazelock.data.cache.overlay.OverlayCacheContract
 import com.velvet.kamikazelock.data.room.AppDatabase
 import com.velvet.kamikazelock.ui.main.MainViewModel
 import com.velvet.kamikazelock.ui.overlay.OverlayViewModel
@@ -18,7 +21,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        MainViewModel(repository = get(), appCache = get(), permissionChecker = get())
+        MainViewModel(appRepository = get(), appCache = get(), permissionChecker = get(), passwordRepository = get())
     }
 
     viewModel { (appName : String) ->
@@ -27,14 +30,23 @@ val appModule = module {
 
     single {
         OverlayCache()
-    }.binds(arrayOf(ActivityOverlayCache::class, ClientOverlayCache::class))
+    }.binds(arrayOf(
+        OverlayCacheContract.ActivityCache::class,
+        OverlayCacheContract.UiCache::class,
+        OverlayCacheContract.RepositoryCache::class))
 
     single {
         AppCache()
-    }.binds(arrayOf(ClientAppCache::class, RepositoryAppCache::class))
+    }.binds(arrayOf(
+        AppCacheContract.UiCache::class,
+        AppCacheContract.RepositoryCache::class))
 
     single {
         AppRepository(androidContext().packageManager, lockedAppsDao = get(), appCache = get())
+    }
+
+    single {
+        PasswordRepository(passwordDao = get(), overlayCache = get())
     }
 
     single {
@@ -48,8 +60,6 @@ val appModule = module {
     single {
         CurrentAppChecker(context = androidContext(), permissionChecker = get())
     }
-
-    //TODO check performance factory vs single, pros and cons
 
     factory {
         PermissionChecker(androidContext())
