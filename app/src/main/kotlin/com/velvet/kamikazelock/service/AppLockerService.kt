@@ -18,6 +18,7 @@ import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 private const val DELAY_MILLIS = 500
+private const val UNLOCKED_TIME_MILLIS = 1000 * 60 * 30
 
 class AppLockerService : Service() {
 
@@ -28,7 +29,7 @@ class AppLockerService : Service() {
     private var lastInvocationTime = System.currentTimeMillis()
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
-    private val lockedAppPackageSet: HashSet<String> = HashSet()
+    private val lockedAppPackages: HashMap<String, Long> = HashMap()
     private var observeForegroundAppsJob: Job? = null
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
@@ -62,9 +63,9 @@ class AppLockerService : Service() {
     private fun observeLockedApps() {
         scope.launch {
             lockedAppsDao.getLockedAppsDistinctUntilChanged().collect { apps ->
-                lockedAppPackageSet.clear()
+                lockedAppPackages.clear()
                 apps.forEach { app ->
-                    lockedAppPackageSet.add(app.packageName)
+                    lockedAppPackages[app.packageName] = 0
                 }
             }
         }
@@ -85,7 +86,12 @@ class AppLockerService : Service() {
     }
 
     private fun onAppForeground(foregroundAppPackage: String) {
-        if (lockedAppPackageSet.contains(foregroundAppPackage) && (System.currentTimeMillis() - lastInvocationTime) >= DELAY_MILLIS) {
+        if (
+            lockedAppPackages.contains(foregroundAppPackage) &&
+            (System.currentTimeMillis() - lockedAppPackages[foregroundAppPackage]!!
+                    >= UNLOCKED_TIME_MILLIS) &&
+            (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS)
+        ) {
             val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

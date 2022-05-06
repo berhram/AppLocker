@@ -8,7 +8,7 @@ import android.provider.Settings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
-private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 5L
+private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 15L
 
 class PermissionChecker(private val context: Context) {
 
