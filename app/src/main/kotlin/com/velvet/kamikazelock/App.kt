@@ -3,7 +3,7 @@ package com.velvet.kamikazelock
 import android.app.Application
 import android.content.Intent
 import androidx.core.content.ContextCompat
-import com.velvet.kamikazelock.bg.AppLockerService
+import com.velvet.kamikazelock.service.AppLockerService
 import com.velvet.kamikazelock.di.appModule
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext

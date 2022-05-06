@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.data.infra
+package com.velvet.kamikazelock.infra
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

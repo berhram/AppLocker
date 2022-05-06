@@ -1,6 +1,6 @@
 package com.velvet.kamikazelock
 
-import com.velvet.kamikazelock.data.infra.AppInfo
+import com.velvet.kamikazelock.infra.AppInfo
 import com.velvet.kamikazelock.ui.main.MainState
 
 fun List<AppInfo>.resetEnabledStates() : List<AppInfo> {

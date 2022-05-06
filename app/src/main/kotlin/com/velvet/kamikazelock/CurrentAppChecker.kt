@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.bg
+package com.velvet.kamikazelock
 
 import android.app.Service
 import android.app.usage.UsageEvents
@@ -6,15 +6,16 @@ import android.app.usage.UsageEvents.Event.*
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.os.Build
+import com.velvet.kamikazelock.data.PermissionChecker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 class CurrentAppChecker(private val context: Context, private val permissionChecker: PermissionChecker) {
 
-    companion object {
-        private const val CHECK_APP_DELAY_MILLIS = 250L
-        private const val CHECK_IN_APPS_OPENED_LAST_MILLIS = 1000 * 3600
-    }
+
+        private val CHECK_APP_DELAY_MILLIS = 250L
+        private val CHECK_IN_APPS_OPENED_LAST_MILLIS = 1000 * 3600
+
 
     fun get(): Flow<String> = flow {
         while (true) {

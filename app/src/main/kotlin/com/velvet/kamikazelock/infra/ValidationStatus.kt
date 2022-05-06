@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.data.infra
+package com.velvet.kamikazelock.infra
 
 enum class ValidationStatus {
     SUCCESS_REAL_PASSWORD,

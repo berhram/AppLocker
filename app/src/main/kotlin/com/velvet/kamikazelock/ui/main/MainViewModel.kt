@@ -4,11 +4,11 @@ import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.velvet.kamikazelock.*
-import com.velvet.kamikazelock.bg.PermissionChecker
+import com.velvet.kamikazelock.data.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
 import com.velvet.kamikazelock.data.PasswordRepository
 import com.velvet.kamikazelock.data.cache.app.AppCacheContract
-import com.velvet.kamikazelock.data.infra.*
+import com.velvet.kamikazelock.infra.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container

@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.bg.receiver
+package com.velvet.kamikazelock.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context

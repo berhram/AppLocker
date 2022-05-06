@@ -1,11 +1,11 @@
-package com.velvet.kamikazelock.bg.receiver
+package com.velvet.kamikazelock.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.content.ContextCompat
-import com.velvet.kamikazelock.bg.AppLockerService
+import com.velvet.kamikazelock.service.AppLockerService
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent) {

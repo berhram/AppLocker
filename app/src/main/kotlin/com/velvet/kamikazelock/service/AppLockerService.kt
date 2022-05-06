@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.bg
+package com.velvet.kamikazelock.service
 
 import android.app.Service
 import android.content.Intent
@@ -6,13 +6,18 @@ import android.content.IntentFilter
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.velvet.kamikazelock.OverlayActivity
-import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED
-import com.velvet.kamikazelock.bg.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_SERVICE
-import com.velvet.kamikazelock.bg.receiver.ScreenStateReceiver
+import com.velvet.kamikazelock.ui.overlay.OverlayActivity
+import com.velvet.kamikazelock.CurrentAppChecker
+import com.velvet.kamikazelock.data.NotificationManager
+import com.velvet.kamikazelock.data.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED
+import com.velvet.kamikazelock.data.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_SERVICE
+import com.velvet.kamikazelock.data.PermissionChecker
+import com.velvet.kamikazelock.receiver.ScreenStateReceiver
 import com.velvet.kamikazelock.data.room.LockedAppsDao
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
+
+private const val DELAY_MILLIS = 500
 
 class AppLockerService : Service() {
 
@@ -28,9 +33,6 @@ class AppLockerService : Service() {
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
         onOffScreen = { stopObserveForegroundApp() })
-    companion object {
-        private const val DELAY_MILLIS = 500
-    }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null

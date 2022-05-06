@@ -1,12 +1,11 @@
-package com.velvet.kamikazelock.data.infra
+package com.velvet.kamikazelock.infra
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "password")
 data class Password(
-    @PrimaryKey val id: Long,
-    val truePassword: String,
+    @PrimaryKey val truePassword: String,
     val falsePassword: String
 ) {
     companion object {

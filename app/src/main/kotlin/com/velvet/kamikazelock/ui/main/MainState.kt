@@ -1,8 +1,8 @@
 package com.velvet.kamikazelock.ui.main
 
 import androidx.annotation.StringRes
-import com.velvet.kamikazelock.data.infra.AppInfo
-import com.velvet.kamikazelock.data.infra.InfoText
+import com.velvet.kamikazelock.infra.AppInfo
+import com.velvet.kamikazelock.infra.InfoText
 
 data class MainState(
     val isChangePasswordDialogEnabled: Boolean = false,

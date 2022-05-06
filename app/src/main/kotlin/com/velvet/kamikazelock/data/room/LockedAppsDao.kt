@@ -1,7 +1,7 @@
 package com.velvet.kamikazelock.data.room
 
 import androidx.room.*
-import com.velvet.kamikazelock.data.infra.LockedApp
+import com.velvet.kamikazelock.infra.LockedApp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 

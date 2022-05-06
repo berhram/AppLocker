@@ -1,7 +1,6 @@
-package com.velvet.kamikazelock
+package com.velvet.kamikazelock.ui.overlay
 
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,15 +12,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.lifecycle.lifecycleScope
+import com.velvet.kamikazelock.R
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCacheContract
-import com.velvet.kamikazelock.data.infra.ValidationStatus
-import com.velvet.kamikazelock.ui.overlay.OverlayScreen
+import com.velvet.kamikazelock.infra.ValidationStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
-
 
 class OverlayActivity : ComponentActivity() {
 
@@ -31,7 +29,9 @@ class OverlayActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else lightColors()) {
-                OverlayScreen(viewModel = getViewModel { parametersOf(intent.getStringExtra(KEY_PACKAGE_NAME)) })
+                OverlayScreen(viewModel = getViewModel { parametersOf(intent.getStringExtra(
+                    KEY_PACKAGE_NAME
+                )) })
             }
         }
         lifecycleScope.launch(Dispatchers.IO) {
@@ -42,7 +42,6 @@ class OverlayActivity : ComponentActivity() {
                         finish()
                     }
                     ValidationStatus.SUCCESS_FAKE_PASSWORD -> {
-                        uninstallApp()
                         setResult(Activity.RESULT_OK)
                         finish()
                     }
@@ -58,7 +57,6 @@ class OverlayActivity : ComponentActivity() {
                 }
             }
         }
-
     }
 
     override fun onBackPressed() {
@@ -68,15 +66,6 @@ class OverlayActivity : ComponentActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
         finish()
-    }
-
-    private fun uninstallApp() {
-        this.packageManager.packageInstaller.uninstall(
-            intent.getStringExtra(KEY_PACKAGE_NAME)!!,
-            PendingIntent.getActivity(
-                this, 0,
-                Intent(applicationContext, applicationContext.javaClass),
-                PendingIntent.FLAG_IMMUTABLE).intentSender)
     }
 
     companion object {

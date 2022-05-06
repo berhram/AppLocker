@@ -1,9 +1,9 @@
 package com.velvet.kamikazelock.di
 
 import androidx.room.Room
-import com.velvet.kamikazelock.bg.CurrentAppChecker
-import com.velvet.kamikazelock.bg.NotificationManager
-import com.velvet.kamikazelock.bg.PermissionChecker
+import com.velvet.kamikazelock.CurrentAppChecker
+import com.velvet.kamikazelock.data.NotificationManager
+import com.velvet.kamikazelock.data.PermissionChecker
 import com.velvet.kamikazelock.data.AppRepository
 import com.velvet.kamikazelock.data.PasswordRepository
 import com.velvet.kamikazelock.data.cache.app.AppCache

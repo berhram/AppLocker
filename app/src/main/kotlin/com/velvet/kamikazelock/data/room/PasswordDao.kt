@@ -1,7 +1,7 @@
 package com.velvet.kamikazelock.data.room
 
 import androidx.room.*
-import com.velvet.kamikazelock.data.infra.Password
+import com.velvet.kamikazelock.infra.Password
 
 @Dao
 interface PasswordDao {

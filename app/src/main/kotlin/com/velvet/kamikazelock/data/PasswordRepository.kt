@@ -1,8 +1,8 @@
 package com.velvet.kamikazelock.data
 
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCacheContract
-import com.velvet.kamikazelock.data.infra.Password
-import com.velvet.kamikazelock.data.infra.ValidationStatus
+import com.velvet.kamikazelock.infra.Password
+import com.velvet.kamikazelock.infra.ValidationStatus
 import com.velvet.kamikazelock.data.room.PasswordDao
 
 class PasswordRepository(
@@ -11,8 +11,7 @@ class PasswordRepository(
 ) {
     fun setNewPassword(newTrue: String, newFalse: String) {
         passwordDao.createPassword(
-            Password(id = System.currentTimeMillis(),
-                truePassword = newTrue, falsePassword = newFalse)
+            Password(truePassword = newTrue, falsePassword = newFalse)
         )
     }
     

@@ -32,9 +32,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.drawable.toBitmap
 import com.google.accompanist.pager.*
 import com.velvet.kamikazelock.R
-import com.velvet.kamikazelock.data.infra.AppInfo
-import com.velvet.kamikazelock.data.infra.Face
-import com.velvet.kamikazelock.data.infra.TextType
+import com.velvet.kamikazelock.infra.AppInfo
+import com.velvet.kamikazelock.infra.Face
+import com.velvet.kamikazelock.infra.TextType
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.absoluteValue
 
@@ -52,7 +52,7 @@ fun MainScreen(viewModel: MainViewModel) {
             }
         }
     }
-    if (state.isChangeFaceDialogEnabled) {
+    if (state.isChangePasswordDialogEnabled) {
         PasswordChangeDialog(
             onDismiss = { viewModel.passwordDialogSwitch() },
             newTruePassword = state.newTruePassword,
@@ -106,14 +106,13 @@ fun MainScreen(viewModel: MainViewModel) {
                                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
                             )
                         }
-                        .padding(10.dp)
                         .clip(MaterialTheme.shapes.medium)
                         .background(if (state.infoTextList[page].type == TextType.WARNING) MaterialTheme.colors.error else MaterialTheme.colors.primary)
-                        .aspectRatio(1f),
+                        .aspectRatio(1f)
+                        .padding(10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-
                         Text(
                             text = stringResource(id = state.infoTextList[page].textId),
                             color = if (state.infoTextList[page].type == TextType.WARNING) {
@@ -132,13 +131,13 @@ fun MainScreen(viewModel: MainViewModel) {
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(modifier = Modifier.width(200.dp), onClick = { viewModel.appLockDialogSwitch() }) {
-                    Text(text = "Locked apps")
+                    Text(text = stringResource(id = R.string.app_lock_button))
                 }
-                Button(modifier = Modifier.width(200.dp), onClick = { /*TODO*/ }) {
-                    Text(text = "Test button 2")
+                Button(modifier = Modifier.width(200.dp), onClick = { viewModel.passwordDialogSwitch() }) {
+                    Text(text = stringResource(id = R.string.password_change_button))
                 }
                 Button(modifier = Modifier.width(200.dp), onClick = { viewModel.faceChangeSwitch() }) {
-                    Text(text = "Change Face")
+                    Text(text = stringResource(id = R.string.face_change_button))
                 }
             }
         }
@@ -174,6 +173,7 @@ fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
                 FaceItem(imageId = R.drawable.schedule, textId = R.string.app_name_schedule, face = Face.SCHEDULE)
                 FaceItem(imageId = R.drawable.fitness, textId = R.string.app_name_fitness, face = Face.FITNESS)
             }
+            Spacer(modifier = Modifier.size(10.dp))
             OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { onDismiss() }) {
                 Text(text = stringResource(id = R.string.cancel))
             }
@@ -300,6 +300,7 @@ fun PasswordChangeDialog(
             }
             OutlinedTextField(value = newTruePassword, onValueChange = { onNewTruePasswordChange(it) }, singleLine = true, label = { Text(text =  stringResource(R.string.true_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
             OutlinedTextField(value = newFalsePassword, onValueChange = { onNewFalsePasswordChange(it) }, singleLine = true, label = { Text(text =  stringResource(R.string.false_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
+            Spacer(modifier = Modifier.size(10.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
                     Text(text = stringResource(id = R.string.cancel))

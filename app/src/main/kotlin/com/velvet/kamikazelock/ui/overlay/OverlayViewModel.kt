@@ -3,7 +3,7 @@ package com.velvet.kamikazelock.ui.overlay
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCacheContract
-import com.velvet.kamikazelock.data.infra.Password
+import com.velvet.kamikazelock.infra.Password
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container

@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.bg
+package com.velvet.kamikazelock.data
 
 import android.app.AppOpsManager
 import android.content.Context
@@ -8,11 +8,9 @@ import android.provider.Settings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
-class PermissionChecker(private val context: Context) {
+private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 5L
 
-    companion object {
-        private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 5L
-    }
+class PermissionChecker(private val context: Context) {
 
     val usagePermissionFlow = flow {
         while (true) {

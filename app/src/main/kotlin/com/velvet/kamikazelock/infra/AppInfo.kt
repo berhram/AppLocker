@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.data.infra
+package com.velvet.kamikazelock.infra
 
 import android.graphics.drawable.Drawable
 

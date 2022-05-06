@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock.bg
+package com.velvet.kamikazelock.data
 
 import android.app.Notification
 import android.app.NotificationChannel

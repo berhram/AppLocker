@@ -4,8 +4,8 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import com.velvet.kamikazelock.data.cache.app.AppCacheContract
-import com.velvet.kamikazelock.data.infra.AppInfo
-import com.velvet.kamikazelock.data.infra.Face
+import com.velvet.kamikazelock.infra.AppInfo
+import com.velvet.kamikazelock.infra.Face
 import com.velvet.kamikazelock.data.room.LockedAppsDao
 
 

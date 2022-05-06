@@ -26,4 +26,7 @@
     <string name="password_not_digits">Password must contain digits only!</string>
     <string name="passwords_same">Passwords can\'t be same!</string>
     <string name="change_password_dialog_text">Password length can be from 4 to 8 characters. Only digits allowed. Passwords must be different!</string>
+    <string name="password_change_button">Change passwords</string>
+    <string name="face_change_button">Change face</string>
+    <string name="app_lock_button">Lock apps</string>
 </resources>

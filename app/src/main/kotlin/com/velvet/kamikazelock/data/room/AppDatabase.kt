@@ -2,8 +2,8 @@ package com.velvet.kamikazelock.data.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.velvet.kamikazelock.data.infra.LockedApp
-import com.velvet.kamikazelock.data.infra.Password
+import com.velvet.kamikazelock.infra.LockedApp
+import com.velvet.kamikazelock.infra.Password
 
 @Database(entities = [LockedApp::class, Password::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

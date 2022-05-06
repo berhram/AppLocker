@@ -5,9 +5,6 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES"/>
-    <uses-permission android:name="android.permission.DELETE_PACKAGES"
-        tools:ignore="ProtectedPermissions"/>
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -57,15 +54,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        <receiver android:name=".bg.receiver.BootReceiver"
+        <receiver android:name=".receiver.BootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <service android:name=".bg.AppLockerService"/>
+        <service android:name=".service.AppLockerService"/>
         <activity
-            android:name=".OverlayActivity"
+            android:name=".ui.overlay.OverlayActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"/>
     </application>
