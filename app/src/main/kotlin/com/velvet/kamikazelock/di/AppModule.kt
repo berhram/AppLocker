@@ -1,11 +1,7 @@
 package com.velvet.kamikazelock.di
 
 import androidx.room.Room
-import com.velvet.kamikazelock.CurrentAppChecker
-import com.velvet.kamikazelock.data.NotificationManager
-import com.velvet.kamikazelock.data.PermissionChecker
-import com.velvet.kamikazelock.data.AppRepository
-import com.velvet.kamikazelock.data.PasswordRepository
+import com.velvet.kamikazelock.data.*
 import com.velvet.kamikazelock.data.cache.app.AppCache
 import com.velvet.kamikazelock.data.cache.app.AppCacheContract
 import com.velvet.kamikazelock.data.cache.overlay.OverlayCache
@@ -24,9 +20,7 @@ val appModule = module {
         MainViewModel(appRepository = get(), appCache = get(), permissionChecker = get(), passwordRepository = get())
     }
 
-    viewModel { (appName : String) ->
-        OverlayViewModel(appPackageName = appName, clientCache = get())
-    }
+    viewModel { OverlayViewModel(clientCache = get()) }
 
     single {
         OverlayCache()

@@ -88,9 +88,9 @@ class AppLockerService : Service() {
     private fun onAppForeground(foregroundAppPackage: String) {
         if (
             lockedAppPackages.contains(foregroundAppPackage) &&
-            (System.currentTimeMillis() - lockedAppPackages[foregroundAppPackage]!!
-                    >= UNLOCKED_TIME_MILLIS) &&
-            (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS)
+            (System.currentTimeMillis() - lockedAppPackages[foregroundAppPackage]!! >= UNLOCKED_TIME_MILLIS) &&
+            (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS) &&
+            (permissionChecker.isOverlayPermissionGranted())
         ) {
             val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

@@ -29,4 +29,6 @@
     <string name="password_change_button">Change passwords</string>
     <string name="face_change_button">Change face</string>
     <string name="app_lock_button">Lock apps</string>
+    <string name="welcome">Welc</string>
+    <string name="false_password_not_implemented">Fal</string>
 </resources>

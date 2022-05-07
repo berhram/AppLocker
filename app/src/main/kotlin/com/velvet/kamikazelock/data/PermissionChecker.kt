@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
 private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 15L
@@ -17,14 +18,14 @@ class PermissionChecker(private val context: Context) {
             emit(isUsageAccessPermissionGranted())
             delay(PERMISSION_CHECK_DELAY_MILLIS)
         }
-    }
+    }.distinctUntilChanged()
 
     val overlayPermissionFlow = flow {
         while (true) {
             emit(isOverlayPermissionGranted())
             delay(PERMISSION_CHECK_DELAY_MILLIS)
         }
-    }
+    }.distinctUntilChanged()
 
     val allPermissionFlow = flow {
         while (true) {

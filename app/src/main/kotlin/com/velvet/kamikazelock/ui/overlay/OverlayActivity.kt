@@ -29,9 +29,7 @@ class OverlayActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else lightColors()) {
-                OverlayScreen(viewModel = getViewModel { parametersOf(intent.getStringExtra(
-                    KEY_PACKAGE_NAME
-                )) })
+                OverlayScreen(viewModel = getViewModel())
             }
         }
         lifecycleScope.launch(Dispatchers.IO) {

@@ -22,7 +22,7 @@
         android:name=".App"
         android:theme="@style/Theme.KamikazeLock">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             android:excludeFromRecents="true">
             <intent-filter>
@@ -33,7 +33,7 @@
         <activity-alias
             android:name=".MainActivityScheduleAlias"
             android:exported="true"
-            android:targetActivity=".MainActivity"
+            android:targetActivity=".ui.main.MainActivity"
             android:icon="@mipmap/ic_schedule"
             android:label="@string/app_name_schedule"
             android:enabled="false">
@@ -45,7 +45,7 @@
         <activity-alias
             android:name=".MainActivityFitnessAlias"
             android:exported="true"
-            android:targetActivity=".MainActivity"
+            android:targetActivity=".ui.main.MainActivity"
             android:icon="@mipmap/ic_fitness"
             android:label="@string/app_name_fitness"
             android:enabled="false">
@@ -60,7 +60,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <service android:name=".service.AppLockerService"/>
+        <service android:name=".service.AppLockerService"
+            android:enabled="true"/>
         <activity
             android:name=".ui.overlay.OverlayActivity"
             android:excludeFromRecents="true"

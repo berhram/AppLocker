@@ -1,4 +1,4 @@
-package com.velvet.kamikazelock
+package com.velvet.kamikazelock.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

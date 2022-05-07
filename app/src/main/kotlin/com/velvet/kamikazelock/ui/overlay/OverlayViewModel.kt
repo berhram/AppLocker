@@ -14,7 +14,6 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 
 class OverlayViewModel(
-    private val appPackageName: String,
     private val clientCache: OverlayCacheContract.UiCache
     ) : ViewModel(), ContainerHost<OverlayState, OverlayEffect> {
 

@@ -7,7 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.velvet.kamikazelock.MainActivity
+import com.velvet.kamikazelock.ui.main.MainActivity
 import com.velvet.kamikazelock.R
 
 class NotificationManager(private val context: Context) {

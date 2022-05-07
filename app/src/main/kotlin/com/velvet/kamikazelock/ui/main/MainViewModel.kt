@@ -34,7 +34,6 @@ class MainViewModel(
                     intent { reduce { state.copy(appList = it) } }
                 }
             }
-            launch { appRepository.observeLockedApps() }
             launch {
                 permissionChecker.usagePermissionFlow.collect { granted ->
                     intent { reduce { state.copy(isUsageStatsPermissionGranted = granted) } }
@@ -94,14 +93,6 @@ class MainViewModel(
         } else {
             reduce { state.copy(isChangePasswordDialogEnabled = true) }
         }
-    }
-
-    fun onNewTruePasswordChange(newTruePassword: String) = intent {
-        reduce { state.copy(newTruePassword = newTruePassword) }
-    }
-
-    fun onNewFalsePasswordChange(newFalsePassword: String) = intent {
-        reduce { state.copy(newFalsePassword = newFalsePassword) }
     }
 
     fun setNewPassword(newTruePassword: String, newFalsePassword: String) = intent {

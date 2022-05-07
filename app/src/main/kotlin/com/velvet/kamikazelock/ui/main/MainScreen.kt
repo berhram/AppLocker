@@ -11,10 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.Modifier
@@ -55,10 +52,6 @@ fun MainScreen(viewModel: MainViewModel) {
     if (state.isChangePasswordDialogEnabled) {
         PasswordChangeDialog(
             onDismiss = { viewModel.passwordDialogSwitch() },
-            newTruePassword = state.newTruePassword,
-            newFalsePassword = state.newFalsePassword,
-            onNewTruePasswordChange = { viewModel.onNewTruePasswordChange(it) },
-            onNewFalsePasswordChange = { viewModel.onNewFalsePasswordChange(it) },
             setNewPassword = { newTrue, newFalse -> viewModel.setNewPassword(newTrue, newFalse) },
             errorTextId = state.newPasswordErrorTextId
         )
@@ -276,13 +269,11 @@ fun DotsPulsing(size: Dp, delayUnit: Int) {
 @Composable
 fun PasswordChangeDialog(
     onDismiss: () -> Unit,
-    newTruePassword: String,
-    newFalsePassword: String,
-    onNewTruePasswordChange: (String) -> Unit,
-    onNewFalsePasswordChange: (String) -> Unit,
     setNewPassword: (String, String) -> Unit,
     @StringRes errorTextId: Int?
 ) {
+    var truePassword by remember { mutableStateOf("") }
+    var falsePassword by remember { mutableStateOf("") }
     Dialog({ onDismiss() }) {
         Column(
             Modifier
@@ -298,15 +289,15 @@ fun PasswordChangeDialog(
                 Text(text = stringResource(id = errorTextId), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.error)
                 Spacer(modifier = Modifier.size(10.dp))
             }
-            OutlinedTextField(value = newTruePassword, onValueChange = { onNewTruePasswordChange(it) }, singleLine = true, label = { Text(text =  stringResource(R.string.true_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
-            OutlinedTextField(value = newFalsePassword, onValueChange = { onNewFalsePasswordChange(it) }, singleLine = true, label = { Text(text =  stringResource(R.string.false_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
+            OutlinedTextField(value = truePassword, onValueChange = { truePassword = it }, singleLine = true, label = { Text(text =  stringResource(R.string.true_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
+            OutlinedTextField(value = falsePassword, onValueChange = { falsePassword = it }, singleLine = true, label = { Text(text =  stringResource(R.string.false_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
             Spacer(modifier = Modifier.size(10.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
                     Text(text = stringResource(id = R.string.cancel))
                 }
                 Spacer(modifier = Modifier.size(10.dp))
-                Button(modifier = Modifier.weight(1f), onClick = { setNewPassword(newTruePassword, newFalsePassword) }) {
+                Button(modifier = Modifier.weight(1f), onClick = { setNewPassword(truePassword, falsePassword) }) {
                     Text(text = stringResource(id = R.string.apply))
                 }
             }

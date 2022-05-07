@@ -19,7 +19,7 @@ class AppRepository(
 
     fun changeFace(newFace: Face) {
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.MainActivity"),
+            ComponentName("com.velvet.kamikazelock", "com.velvet.kamikazelock.ui.main.MainActivity"),
             if (newFace == Face.DEFAULT) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
@@ -36,10 +36,14 @@ class AppRepository(
     }
 
     fun fetchApps() {
+        lockedAppPackageSet.clear()
+        lockedAppsDao.syncLockedApps().forEach { app ->
+            lockedAppPackageSet.add(app.packageName)
+        }
         val output = ArrayList<AppInfo>()
-        val intent = Intent(Intent.ACTION_MAIN, null)
-        intent.addCategory(Intent.CATEGORY_LAUNCHER)
-        packageManager.queryIntentActivities(intent, 0).forEach { resolveInfo ->
+        packageManager.queryIntentActivities(
+            Intent(Intent.ACTION_MAIN, null).apply { addCategory(Intent.CATEGORY_LAUNCHER) }, 0
+        ).forEach { resolveInfo ->
             with(resolveInfo) {
                 output.add(
                     AppInfo(
@@ -48,7 +52,7 @@ class AppRepository(
                     icon = loadIcon(packageManager),
                     isLocked = lockedAppPackageSet.contains(activityInfo.packageName),
                     isChanged = false
-                )
+                    )
                 )
             }
         }
@@ -64,15 +68,6 @@ class AppRepository(
     fun unlockApps(apps: List<AppInfo>) {
         apps.forEach {
             lockedAppsDao.unlockApp(it.toLockedApp())
-        }
-    }
-
-    suspend fun observeLockedApps()  {
-        lockedAppsDao.getLockedAppsDistinctUntilChanged().collect { apps ->
-            lockedAppPackageSet.clear()
-            apps.forEach { app ->
-                lockedAppPackageSet.add(app.packageName)
-            }
         }
     }
 }
