@@ -96,9 +96,9 @@ class MainViewModel(
     }
 
     fun setNewPassword(newTruePassword: String, newFalsePassword: String) = intent {
-        if (newFalsePassword.length >= Password.MAX_PASSWORD_LENGTH || newTruePassword.length >= Password.MAX_PASSWORD_LENGTH) {
+        if (newFalsePassword.length > Password.MAX_PASSWORD_LENGTH || newTruePassword.length > Password.MAX_PASSWORD_LENGTH) {
             reduce { state.copy(newPasswordErrorTextId = R.string.too_long) }
-        } else if (newFalsePassword.length <= Password.MAX_PASSWORD_LENGTH || newTruePassword.length <= Password.MIN_PASSWORD_LENGTH) {
+        } else if (newFalsePassword.length < Password.MIN_PASSWORD_LENGTH || newTruePassword.length < Password.MIN_PASSWORD_LENGTH) {
             reduce { state.copy(newPasswordErrorTextId = R.string.password_too_short) }
         } else if (!newFalsePassword.isDigitsOnly() || !newTruePassword.isDigitsOnly()) {
             reduce { state.copy(newPasswordErrorTextId = R.string.password_not_digits) }
@@ -114,13 +114,19 @@ class MainViewModel(
 
     private fun recomposeInfoTexts() = intent {
         val newList: ArrayList<InfoText> = ArrayList()
+        newList.add(InfoText.getWelcome())
         if (!state.isUsageStatsPermissionGranted) {
             newList.add(InfoText.getUsageStatsWarning())
         }
         if (!state.isOverlayPermissionGranted) {
             newList.add(InfoText.getOverlayWarning())
         }
-        newList.addAll(listOf(InfoText.getInstruction(), InfoText.getDevContacts()))
+        newList.addAll(listOf(
+            InfoText.getInstruction(),
+            InfoText.getFalsePasswordNotYetImplemented(),
+            InfoText.getDevContacts()
+            )
+        )
         reduce {
             state.copy(infoTextList = newList)
         }

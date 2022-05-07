@@ -13,7 +13,7 @@
     <string name="notification_permission_need_description">Need to grant permissions!</string>
     <string name="notification_running_title">KamiLock running</string>
     <string name="instruction">Step 1: grant needed permissions.\nStep 2: choose apps to lock.\nStep 3: Set up password (real and fake ones).</string>
-    <string name="dev_contacts">Dev\'s Telegram: @koshkodanya, feel free to text!</string>
+    <string name="dev_contacts">Dev\'s contacts:\nTelegram: @koshkodanya\nGithub: berhram\nFeel free to text me!</string>
     <string name="usage_stats_warning">Please grant usage access permission!</string>
     <string name="overlay_warning">Please grant screen overlay permission!</string>
     <string name="password_not_created">Set password or app will not work!</string>
@@ -24,11 +24,11 @@
     <string name="false_password_enter">New false password</string>
     <string name="too_long">Password\'s length can\'t be more than 8 characters!</string>
     <string name="password_not_digits">Password must contain digits only!</string>
-    <string name="passwords_same">Passwords can\'t be same!</string>
+    <string name="passwords_same">Passwords can\'t be equal!</string>
     <string name="change_password_dialog_text">Password length can be from 4 to 8 characters. Only digits allowed. Passwords must be different!</string>
     <string name="password_change_button">Change passwords</string>
     <string name="face_change_button">Change face</string>
     <string name="app_lock_button">Lock apps</string>
-    <string name="welcome">Welc</string>
-    <string name="false_password_not_implemented">Fal</string>
+    <string name="welcome">It it free, open-source app that locks selected apps to prevent malevolent access to your apps. Feel free to criticize some app feature, I\'m always open to your suggestion.</string>
+    <string name="false_password_not_implemented">False app feature now in WIP status. It will be completely implemented later.</string>
 </resources>
