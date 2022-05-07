@@ -6,8 +6,8 @@ import android.content.IntentFilter
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.velvet.kamikazelock.data.CurrentAppChecker
 import com.velvet.kamikazelock.ui.overlay.OverlayActivity
-import com.velvet.kamikazelock.CurrentAppChecker
 import com.velvet.kamikazelock.data.NotificationManager
 import com.velvet.kamikazelock.data.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED
 import com.velvet.kamikazelock.data.NotificationManager.Companion.NOTIFICATION_ID_APPLOCKER_SERVICE

@@ -6,7 +6,6 @@ import android.app.usage.UsageEvents.Event.*
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.os.Build
-import com.velvet.kamikazelock.data.PermissionChecker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
