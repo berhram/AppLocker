@@ -150,35 +150,37 @@ fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
         }
     }
     Dialog({ onDismiss() }) {
-        Column(
-            Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colors.background)
-                .padding(10.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.face_change_dialog_title),
-                style = MaterialTheme.typography.h4,
-                color = MaterialTheme.colors.primary
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(
-                text = stringResource(id = R.string.face_change_dialog_text),
-                style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+        Surface {
+            Column(
+                Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colors.background)
+                    .padding(10.dp)
             ) {
-                FaceItem(imageId = R.drawable.launcher, textId = R.string.app_name, face = Face.DEFAULT)
-                FaceItem(imageId = R.drawable.schedule, textId = R.string.app_name_schedule, face = Face.SCHEDULE)
-                FaceItem(imageId = R.drawable.fitness, textId = R.string.app_name_fitness, face = Face.FITNESS)
-            }
-            Spacer(modifier = Modifier.size(10.dp))
-            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { onDismiss() }) {
-                Text(text = stringResource(id = R.string.cancel))
+                Text(
+                    text = stringResource(id = R.string.face_change_dialog_title),
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                Text(
+                    text = stringResource(id = R.string.face_change_dialog_text),
+                    style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FaceItem(imageId = R.drawable.launcher, textId = R.string.app_name, face = Face.DEFAULT)
+                    FaceItem(imageId = R.drawable.schedule, textId = R.string.app_name_schedule, face = Face.SCHEDULE)
+                    FaceItem(imageId = R.drawable.fitness, textId = R.string.app_name_fitness, face = Face.FITNESS)
+                }
+                Spacer(modifier = Modifier.size(10.dp))
+                OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { onDismiss() }) {
+                    Text(text = stringResource(id = R.string.cancel))
+                }
             }
         }
     }
@@ -205,44 +207,46 @@ fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismi
         }
     }
     Dialog({ onDismiss() }) {
-        Column(
-            Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colors.background)
-                .padding(10.dp)
-        ) {
-            Text(text = stringResource(id = R.string.locked_apps_dialog_title),
-                style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(
-                text = stringResource(id = R.string.locked_apps_dialog_text),
-                style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(400.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+        Surface {
+            Column(
+                Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colors.background)
+                    .padding(10.dp)
             ) {
-                if (appList.isEmpty()) {
-                    item {
-                        DotsPulsing(size = 20.dp, delayUnit = 300)
-                    }
-                } else {
-                    items(appList) {
-                        AppItem(item = it)
-                    }
-                }
-            }
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
-                    Text(text = stringResource(id = R.string.cancel))
-                }
+                Text(text = stringResource(id = R.string.locked_apps_dialog_title),
+                    style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
                 Spacer(modifier = Modifier.size(10.dp))
-                Button(modifier = Modifier.weight(1f), onClick = { onApply() }) {
-                    Text(text = stringResource(id = R.string.apply))
+                Text(
+                    text = stringResource(id = R.string.locked_apps_dialog_text),
+                    style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    if (appList.isEmpty()) {
+                        item {
+                            DotsPulsing(size = 20.dp, delayUnit = 300)
+                        }
+                    } else {
+                        items(appList) {
+                            AppItem(item = it)
+                        }
+                    }
+                }
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
+                        Text(text = stringResource(id = R.string.cancel))
+                    }
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Button(modifier = Modifier.weight(1f), onClick = { onApply() }) {
+                        Text(text = stringResource(id = R.string.apply))
+                    }
                 }
             }
         }
@@ -295,46 +299,55 @@ fun PasswordChangeDialog(
 ) {
     var newPassword by remember { mutableStateOf("") }
     Dialog({ onDismiss() }) {
-        Column(
-            Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colors.background)
-                .padding(10.dp)
-        ) {
-            Text(
-                text = stringResource(id = R.string.change_password_dialog_title),
-                style = MaterialTheme.typography.h4,
-                color = MaterialTheme.colors.primary
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(
-                text = stringResource(id = R.string.change_password_dialog_text),
-                style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            if (errorTextId != null) {
-                Text(text = stringResource(id = errorTextId), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.error)
+        Surface {
+            Column(
+                Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colors.background)
+                    .padding(10.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.change_password_dialog_title),
+                    style = MaterialTheme.typography.h4,
+                    color = MaterialTheme.colors.primary
+                )
                 Spacer(modifier = Modifier.size(10.dp))
-            }
-            OutlinedTextField(
-                value = newPassword, onValueChange = { newPassword = it },
-                singleLine = true,
-                label = {
+                Text(
+                    text = stringResource(id = R.string.change_password_dialog_text),
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onBackground
+                )
+                Spacer(modifier = Modifier.size(10.dp))
+                if (errorTextId != null) {
                     Text(
-                        text =  stringResource(R.string.new_password_enter),
-                        color = MaterialTheme.colors.primary,
-                        style = MaterialTheme.typography.caption
+                        text = stringResource(id = errorTextId),
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.error
                     )
+                    Spacer(modifier = Modifier.size(10.dp))
                 }
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
-                    Text(text = stringResource(id = R.string.cancel))
-                }
+                OutlinedTextField(
+                    value = newPassword, onValueChange = { newPassword = it },
+                    singleLine = true,
+                    label = {
+                        Text(
+                            text = stringResource(R.string.new_password_enter),
+                            color = MaterialTheme.colors.primary,
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
+                )
                 Spacer(modifier = Modifier.size(10.dp))
-                Button(modifier = Modifier.weight(1f), onClick = { setNewPassword(newPassword) }) {
-                    Text(text = stringResource(id = R.string.apply))
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
+                        Text(text = stringResource(id = R.string.cancel))
+                    }
+                    Spacer(modifier = Modifier.size(10.dp))
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = { setNewPassword(newPassword) }) {
+                        Text(text = stringResource(id = R.string.apply))
+                    }
                 }
             }
         }
