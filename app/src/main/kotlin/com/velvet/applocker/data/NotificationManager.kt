@@ -59,8 +59,8 @@ class NotificationManager(private val context: Context) {
     }
 
     companion object {
-        private const val CHANNEL_NAME = "KamiLock channel"
-        private const val CHANNEL_DESC = "KamiLock notification channel"
+        private const val CHANNEL_NAME = "AppLocker channel"
+        private const val CHANNEL_DESC = "AppLocker notification channel"
         private const val CHANNEL_ID_APPLOCKER_SERVICE = "CHANNEL_ID_APPLOCKER_SERVICE"
         const val NOTIFICATION_ID_APPLOCKER_SERVICE = 1
         const val NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED = 2

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KamiLock</string>
+    <string name="app_name">AppLocker</string>
     <string name="app_name_schedule">BusLy</string>
     <string name="app_name_fitness">Fi(t)ness</string>
     <string name="face_change_dialog_title">App face</string>
@@ -9,9 +9,9 @@
     <string name="locked_apps_dialog_text">Choose app what suppose to be locked.</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
-    <string name="notification_title">KamiLock</string>
+    <string name="notification_title">AppLocker</string>
     <string name="notification_permission_need_description">Need to grant permissions!</string>
-    <string name="notification_running_title">KamiLock running</string>
+    <string name="notification_running_title">AppLocker running</string>
     <string name="instruction">Step 1: grant needed permissions.\nStep 2: choose apps to lock.\nStep 3: Set up password (real and fake ones).</string>
     <string name="dev_contacts">Dev\'s contacts:\nTelegram: @koshkodanya\nGithub: berhram\nFeel free to text me!</string>
     <string name="usage_stats_warning">Please grant usage access permission!</string>
