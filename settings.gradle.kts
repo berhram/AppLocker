@@ -6,5 +6,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "Kamikaze Lock"
+rootProject.name = "AppLocker"
 include(":app")
