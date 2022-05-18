@@ -95,17 +95,15 @@ class MainViewModel(
         }
     }
 
-    fun setNewPassword(newTruePassword: String, newFalsePassword: String) = intent {
-        if (newFalsePassword.length > Password.MAX_PASSWORD_LENGTH || newTruePassword.length > Password.MAX_PASSWORD_LENGTH) {
+    fun setNewPassword(newPassword: String) = intent {
+        if (newPassword.length > Password.MAX_PASSWORD_LENGTH) {
             reduce { state.copy(newPasswordErrorTextId = R.string.too_long) }
-        } else if (newFalsePassword.length < Password.MIN_PASSWORD_LENGTH || newTruePassword.length < Password.MIN_PASSWORD_LENGTH) {
+        } else if (newPassword.length < Password.MIN_PASSWORD_LENGTH) {
             reduce { state.copy(newPasswordErrorTextId = R.string.password_too_short) }
-        } else if (!newFalsePassword.isDigitsOnly() || !newTruePassword.isDigitsOnly()) {
+        } else if (!newPassword.isDigitsOnly()) {
             reduce { state.copy(newPasswordErrorTextId = R.string.password_not_digits) }
-        } else if (newFalsePassword == newTruePassword) {
-            reduce { state.copy(newPasswordErrorTextId = R.string.passwords_same) }
         } else {
-            passwordRepository.setNewPassword(newTrue = newTruePassword, newFalse = newFalsePassword)
+            passwordRepository.setNewPassword(newPassword = newPassword)
             passwordDialogSwitch()
         }
     }
@@ -123,7 +121,6 @@ class MainViewModel(
         }
         newList.addAll(listOf(
             InfoText.getInstruction(),
-            InfoText.getFalsePasswordNotYetImplemented(),
             InfoText.getDevContacts()
             )
         )

@@ -9,9 +9,9 @@ class PasswordRepository(
     private val passwordDao: PasswordDao,
     private val overlayCache: OverlayCacheContract.RepositoryCache
 ) {
-    fun setNewPassword(newTrue: String, newFalse: String) {
+    fun setNewPassword(newPassword: String) {
         passwordDao.createPassword(
-            Password(truePassword = newTrue, falsePassword = newFalse)
+            Password(password = newPassword)
         )
     }
     
@@ -22,11 +22,8 @@ class PasswordRepository(
                     overlayCache.statusFlow.tryEmit(ValidationStatus.FAILURE_NO_PASSWORD_SET)
                 } else {
                     when (it) {
-                        passwordDao.getPassword().truePassword -> {
-                            overlayCache.statusFlow.tryEmit(ValidationStatus.SUCCESS_REAL_PASSWORD)
-                        }
-                        passwordDao.getPassword().falsePassword -> {
-                            overlayCache.statusFlow.tryEmit(ValidationStatus.SUCCESS_FAKE_PASSWORD)
+                        passwordDao.getPassword().password -> {
+                            overlayCache.statusFlow.tryEmit(ValidationStatus.SUCCESS)
                         }
                         else -> {
                             overlayCache.statusFlow.tryEmit(ValidationStatus.FAILURE_WRONG_PASSWORD)

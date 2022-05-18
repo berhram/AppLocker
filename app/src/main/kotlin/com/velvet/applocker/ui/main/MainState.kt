@@ -15,7 +15,5 @@ data class MainState(
     val isOverlayPermissionGranted: Boolean = true,
     val isUsageStatsPermissionGranted: Boolean = true,
 
-    val newTruePassword: String = "",
-    val newFalsePassword: String = "",
     @StringRes val newPasswordErrorTextId: Int? = null
 )

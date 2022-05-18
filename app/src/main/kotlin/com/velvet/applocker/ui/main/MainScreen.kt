@@ -52,7 +52,7 @@ fun MainScreen(viewModel: MainViewModel) {
     if (state.isChangePasswordDialogEnabled) {
         PasswordChangeDialog(
             onDismiss = { viewModel.passwordDialogSwitch() },
-            setNewPassword = { newTrue, newFalse -> viewModel.setNewPassword(newTrue, newFalse) },
+            setNewPassword = { viewModel.setNewPassword(it) },
             errorTextId = state.newPasswordErrorTextId
         )
     }
@@ -141,7 +141,10 @@ fun MainScreen(viewModel: MainViewModel) {
 fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
     @Composable
     fun FaceItem(imageId: Int, textId: Int, face: Face) {
-        Column(modifier = Modifier.clickable { onChoosing(face) }, horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.clickable { onChoosing(face) },
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Image(painter = painterResource(id = imageId), contentDescription = "Image with id $imageId")
             Text(text = stringResource(id = textId))
         }
@@ -153,9 +156,16 @@ fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
                 .background(MaterialTheme.colors.background)
                 .padding(10.dp)
         ) {
-            Text(text = stringResource(id = R.string.face_change_dialog_title), style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
+            Text(
+                text = stringResource(id = R.string.face_change_dialog_title),
+                style = MaterialTheme.typography.h4,
+                color = MaterialTheme.colors.primary
+            )
             Spacer(modifier = Modifier.size(10.dp))
-            Text(text = stringResource(id = R.string.face_change_dialog_text), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground)
+            Text(
+                text = stringResource(id = R.string.face_change_dialog_text),
+                style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
+            )
             Spacer(modifier = Modifier.size(10.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -178,8 +188,16 @@ fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
 fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismiss: () -> Unit, onApply: () -> Unit) {
     @Composable
     fun AppItem(item: AppInfo) {
-        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-            Image(modifier = Modifier.size(32.dp), bitmap = item.icon.toBitmap().asImageBitmap(), contentDescription = "Image with id ${item.name}")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Image(
+                modifier = Modifier.size(32.dp),
+                bitmap = item.icon.toBitmap().asImageBitmap(),
+                contentDescription = "Image with id ${item.name}"
+            )
             Spacer(modifier = Modifier.size(10.dp))
             Text(text = item.name, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.body1)
             Spacer(modifier = Modifier.weight(1f))
@@ -196,7 +214,10 @@ fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismi
             Text(text = stringResource(id = R.string.locked_apps_dialog_title),
                 style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
             Spacer(modifier = Modifier.size(10.dp))
-            Text(text = stringResource(id = R.string.locked_apps_dialog_text), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground)
+            Text(
+                text = stringResource(id = R.string.locked_apps_dialog_text),
+                style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
+            )
             Spacer(modifier = Modifier.size(10.dp))
             LazyColumn(
                 modifier = Modifier
@@ -269,11 +290,10 @@ fun DotsPulsing(size: Dp, delayUnit: Int) {
 @Composable
 fun PasswordChangeDialog(
     onDismiss: () -> Unit,
-    setNewPassword: (String, String) -> Unit,
+    setNewPassword: (String) -> Unit,
     @StringRes errorTextId: Int?
 ) {
-    var truePassword by remember { mutableStateOf("") }
-    var falsePassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
     Dialog({ onDismiss() }) {
         Column(
             Modifier
@@ -281,23 +301,39 @@ fun PasswordChangeDialog(
                 .background(MaterialTheme.colors.background)
                 .padding(10.dp)
         ) {
-            Text(text = stringResource(id = R.string.change_password_dialog_title), style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
+            Text(
+                text = stringResource(id = R.string.change_password_dialog_title),
+                style = MaterialTheme.typography.h4,
+                color = MaterialTheme.colors.primary
+            )
             Spacer(modifier = Modifier.size(10.dp))
-            Text(text = stringResource(id = R.string.change_password_dialog_text), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground)
+            Text(
+                text = stringResource(id = R.string.change_password_dialog_text),
+                style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
+            )
             Spacer(modifier = Modifier.size(10.dp))
             if (errorTextId != null) {
                 Text(text = stringResource(id = errorTextId), style = MaterialTheme.typography.body1, color = MaterialTheme.colors.error)
                 Spacer(modifier = Modifier.size(10.dp))
             }
-            OutlinedTextField(value = truePassword, onValueChange = { truePassword = it }, singleLine = true, label = { Text(text =  stringResource(R.string.true_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
-            OutlinedTextField(value = falsePassword, onValueChange = { falsePassword = it }, singleLine = true, label = { Text(text =  stringResource(R.string.false_password_enter), color = MaterialTheme.colors.primary, style = MaterialTheme.typography.caption) })
+            OutlinedTextField(
+                value = newPassword, onValueChange = { newPassword = it },
+                singleLine = true,
+                label = {
+                    Text(
+                        text =  stringResource(R.string.new_password_enter),
+                        color = MaterialTheme.colors.primary,
+                        style = MaterialTheme.typography.caption
+                    )
+                }
+            )
             Spacer(modifier = Modifier.size(10.dp))
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
                     Text(text = stringResource(id = R.string.cancel))
                 }
                 Spacer(modifier = Modifier.size(10.dp))
-                Button(modifier = Modifier.weight(1f), onClick = { setNewPassword(truePassword, falsePassword) }) {
+                Button(modifier = Modifier.weight(1f), onClick = { setNewPassword(newPassword) }) {
                     Text(text = stringResource(id = R.string.apply))
                 }
             }

@@ -34,11 +34,7 @@ class OverlayActivity : ComponentActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             cache.statusFlow.collect {
                 when (it) {
-                    ValidationStatus.SUCCESS_REAL_PASSWORD -> {
-                        setResult(Activity.RESULT_OK)
-                        finish()
-                    }
-                    ValidationStatus.SUCCESS_FAKE_PASSWORD -> {
+                    ValidationStatus.SUCCESS -> {
                         setResult(Activity.RESULT_OK)
                         finish()
                     }

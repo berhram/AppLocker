@@ -18,8 +18,5 @@ fun List<AppInfo>.onAppLockChoice(appInfo: AppInfo) : List<AppInfo> {
 }
 
 fun MainState.resetAndClosePasswordDialog() : MainState {
-    return this.copy(newFalsePassword = "",
-        newTruePassword = "",
-        newPasswordErrorTextId = null,
-        isChangePasswordDialogEnabled = false)
+    return this.copy(newPasswordErrorTextId = null, isChangePasswordDialogEnabled = false)
 }

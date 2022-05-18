@@ -20,11 +20,9 @@
     <string name="password_too_short">Password too short!</string>
     <string name="wrong_password">Wrong password!</string>
     <string name="change_password_dialog_title">New passwords</string>
-    <string name="true_password_enter">New true password</string>
-    <string name="false_password_enter">New false password</string>
+    <string name="new_password_enter">New password</string>
     <string name="too_long">Password\'s length can\'t be more than 8 characters!</string>
     <string name="password_not_digits">Password must contain digits only!</string>
-    <string name="passwords_same">Passwords can\'t be equal!</string>
     <string name="change_password_dialog_text">Password length can be from 4 to 8 characters. Only digits allowed. Passwords must be different!</string>
     <string name="password_change_button">Change passwords</string>
     <string name="face_change_button">Change face</string>

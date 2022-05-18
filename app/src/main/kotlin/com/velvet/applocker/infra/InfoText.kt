@@ -16,10 +16,6 @@ data class InfoText(
             return InfoText(type = TextType.INFO, textId = R.string.welcome)
         }
 
-        fun getFalsePasswordNotYetImplemented() : InfoText {
-            return InfoText(type = TextType.INFO, textId = R.string.false_password_not_implemented)
-        }
-
         fun getDevContacts() : InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.dev_contacts)
         }
