@@ -26,7 +26,7 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
             }
         }
     }
-    Surface {
+    Surface(color = MaterialTheme.colors.background) {
         Column(Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier.weight(0.4f),
