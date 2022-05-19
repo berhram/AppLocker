@@ -78,6 +78,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
     //Accompanist
     val accompanistVersion = "0.23.1"
+    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-pager:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-swiperefresh:$accompanistVersion")
     implementation("com.google.accompanist:accompanist-pager-indicators:$accompanistVersion")

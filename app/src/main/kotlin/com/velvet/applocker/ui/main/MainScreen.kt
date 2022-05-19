@@ -17,6 +17,7 @@ import androidx.compose.ui.util.lerp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.graphics.drawable.toBitmap
 import com.google.accompanist.pager.*
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.velvet.applocker.R
 import com.velvet.applocker.infra.AppInfo
 import com.velvet.applocker.infra.Face

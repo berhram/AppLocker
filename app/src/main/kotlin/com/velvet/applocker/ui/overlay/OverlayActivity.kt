@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -15,6 +16,8 @@ import androidx.lifecycle.lifecycleScope
 import com.velvet.applocker.R
 import com.velvet.applocker.data.cache.overlay.OverlayCacheContract
 import com.velvet.applocker.infra.ValidationStatus
+import com.velvet.applocker.setThemedContent
+import com.velvet.applocker.ui.main.MainScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -26,10 +29,8 @@ class OverlayActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else lightColors()) {
-                OverlayScreen(viewModel = getViewModel())
-            }
+        setThemedContent {
+            OverlayScreen(viewModel = getViewModel())
         }
         lifecycleScope.launch(Dispatchers.IO) {
             cache.statusFlow.collect {

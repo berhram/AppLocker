@@ -1,6 +1,14 @@
 package com.velvet.applocker
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
 import com.velvet.applocker.infra.AppInfo
+import com.velvet.applocker.ui.SystemUISetup
 import com.velvet.applocker.ui.main.MainState
 
 fun List<AppInfo>.resetEnabledStates() : List<AppInfo> {
@@ -19,4 +27,14 @@ fun List<AppInfo>.onAppLockChoice(appInfo: AppInfo) : List<AppInfo> {
 
 fun MainState.resetAndClosePasswordDialog() : MainState {
     return this.copy(newPasswordErrorTextId = null, isChangePasswordDialogEnabled = false)
+}
+
+fun ComponentActivity.setThemedContent(content: @Composable () -> Unit) {
+    this.actionBar?.hide()
+    setContent {
+        MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else lightColors()) {
+            SystemUISetup()
+            content()
+        }
+    }
 }
