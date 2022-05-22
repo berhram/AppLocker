@@ -7,7 +7,6 @@ import com.velvet.applocker.infra.InfoText
 data class MainState(
     val isChangePasswordDialogEnabled: Boolean = false,
     val isChangeFaceDialogEnabled: Boolean = false,
-    val isAppLockDialogEnabled: Boolean = false,
 
     val appList: List<AppInfo> = emptyList(),
     val infoTextList: List<InfoText> = listOf(),

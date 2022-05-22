@@ -46,6 +46,7 @@ class MainViewModel(
                     recomposeInfoTexts()
                 }
             }
+            launch { appRepository.fetchApps() }
         }
     }
 
@@ -63,26 +64,9 @@ class MainViewModel(
 
     //Lock
 
-    fun appLockChoice(appInfo: AppInfo) = intent {
-        reduce { state.copy(appList = state.appList.onAppLockChoice(appInfo)) }
-    }
-
-    fun appLockDialogSwitch() = intent {
-        if (state.isAppLockDialogEnabled) {
-            reduce { state.copy(isAppLockDialogEnabled = false) }
-        } else {
-            reduce { state.copy(isAppLockDialogEnabled = true, appList = emptyList()) }
-            viewModelScope.launch(Dispatchers.IO) { appRepository.fetchApps() }
-        }
-    }
-
-    fun applyLock() = intent {
-        appRepository.lockApps(state.appList.filter { it.isChanged && !it.isLocked })
-        appRepository.unlockApps(state.appList.filter { it.isChanged && it.isLocked })
-        reduce { state.copy(
-            isAppLockDialogEnabled = false,
-            appList = state.appList.resetEnabledStates())
-        }
+    fun applyLock(changedList: List<AppInfo>) = intent {
+        appRepository.lockApps(state.appList.filter { changedList.contains(it) }.filter { it.isLocked.not() })
+        appRepository.unlockApps(state.appList.filter { changedList.contains(it) }.filter { it.isLocked })
     }
 
     //Password change
@@ -112,18 +96,14 @@ class MainViewModel(
 
     private fun recomposeInfoTexts() = intent {
         val newList: ArrayList<InfoText> = ArrayList()
-        newList.add(InfoText.getWelcome())
+        newList.add(InfoText.createWelcome())
         if (!state.isUsageStatsPermissionGranted) {
-            newList.add(InfoText.getUsageStatsWarning())
+            newList.add(InfoText.createUsageStatsWarning())
         }
         if (!state.isOverlayPermissionGranted) {
-            newList.add(InfoText.getOverlayWarning())
+            newList.add(InfoText.createOverlayWarning())
         }
-        newList.addAll(listOf(
-            InfoText.getInstruction(),
-            InfoText.getDevContacts()
-            )
-        )
+        newList.addAll(listOf(InfoText.createInstruction(), InfoText.createDevContacts()))
         reduce {
             state.copy(infoTextList = newList)
         }

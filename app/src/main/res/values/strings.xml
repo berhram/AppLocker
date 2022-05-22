@@ -29,4 +29,5 @@
     <string name="app_lock_button">Lock apps</string>
     <string name="welcome">It it free, open-source app that locks selected apps to prevent malevolent access to your apps. Feel free to criticize some app feature, I\'m always open to your suggestion.</string>
     <string name="false_password_not_implemented">False app feature now in WIP status. It will be completely implemented later.</string>
+    <string name="proceed">Proceed</string>
 </resources>

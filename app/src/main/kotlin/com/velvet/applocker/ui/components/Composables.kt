@@ -6,8 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -16,11 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -53,74 +49,6 @@ fun SystemUISetup() {
 }
 
 @Composable
-fun AppItem(item: AppInfo, onChoosing: (AppInfo) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Image(
-            modifier = Modifier.size(32.dp),
-            bitmap = item.icon.toBitmap().asImageBitmap(),
-            contentDescription = "Image with id ${item.name}"
-        )
-        Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
-        Text(text = item.name, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.body1)
-        Spacer(modifier = Modifier.weight(1f))
-        Checkbox(checked = item.isChanged xor item.isLocked, onCheckedChange = { onChoosing(item) })
-    }
-}
-
-@Composable
-fun AppListDialog(appList: List<AppInfo>, onChoosing: (AppInfo) -> Unit, onDismiss: () -> Unit, onApply: () -> Unit) {
-    Dialog({ onDismiss() }) {
-        Surface(color = MaterialTheme.colors.background) {
-            Column(
-                Modifier
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colors.background)
-                    .padding(MaterialTheme.spacing.small)
-            ) {
-                Text(text = stringResource(id = R.string.locked_apps_dialog_title),
-                    style = MaterialTheme.typography.h4, color = MaterialTheme.colors.primary)
-                Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
-                Text(
-                    text = stringResource(id = R.string.locked_apps_dialog_text),
-                    style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
-                )
-                Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(400.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    if (appList.isEmpty()) {
-                        item {
-                            DotsPulsing(size = 20.dp, delayUnit = 300)
-                        }
-                    } else {
-                        items(appList) {
-                            AppItem(item = it, onChoosing = onChoosing)
-                        }
-                    }
-                }
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedButton(modifier = Modifier.weight(1f), onClick = { onDismiss() }) {
-                        Text(text = stringResource(id = R.string.cancel))
-                    }
-                    Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
-                    Button(modifier = Modifier.weight(1f), onClick = { onApply() }) {
-                        Text(text = stringResource(id = R.string.apply))
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun FaceItem(imageId: Int, textId: Int, face: Face, onChoosing: (Face) -> Unit) {
     Column(
         modifier = Modifier.clickable { onChoosing(face) },
@@ -134,13 +62,8 @@ fun FaceItem(imageId: Int, textId: Int, face: Face, onChoosing: (Face) -> Unit) 
 @Composable
 fun FacesDialog(onChoosing: (Face) -> Unit, onDismiss: () -> Unit) {
     Dialog({ onDismiss() }) {
-        Surface(color = MaterialTheme.colors.background) {
-            Column(
-                Modifier
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colors.background)
-                    .padding(MaterialTheme.spacing.small)
-            ) {
+        Surface(modifier = Modifier.clip(MaterialTheme.shapes.medium), color = MaterialTheme.colors.surface) {
+            Column(Modifier.padding(MaterialTheme.spacing.small)) {
                 Text(
                     text = stringResource(id = R.string.face_change_dialog_title),
                     style = MaterialTheme.typography.h4,

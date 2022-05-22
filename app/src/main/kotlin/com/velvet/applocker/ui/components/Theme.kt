@@ -6,13 +6,14 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
     val colors = if (isSystemInDarkTheme()) {
-        darkColors()
+        darkColors(surface = Color(0xFF212121))
     } else {
-        lightColors()
+        lightColors(surface = Color(0xFFEEEEEE))
     }
     CompositionLocalProvider(LocalSpacing provides Spacing()) {
         MaterialTheme (
