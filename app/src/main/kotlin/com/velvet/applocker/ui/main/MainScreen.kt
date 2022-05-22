@@ -98,7 +98,6 @@ fun MainScreen(viewModel: MainViewModel) {
                     .aspectRatio(1f)
                     .padding(MaterialTheme.spacing.large),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = stringResource(id = state.infoTextList[page].textId),
@@ -107,8 +106,9 @@ fun MainScreen(viewModel: MainViewModel) {
                         } else MaterialTheme.colors.onPrimary
                     )
                     state.infoTextList[page].action?.let { action ->
-                        Spacer(modifier = Modifier.size(MaterialTheme.spacing.medium))
+                        Spacer(modifier = Modifier.weight(1f))
                         OutlinedButton(
+                            modifier = Modifier.fillMaxWidth(),
                             onClick = { handleAction(action) },
                             //TODO more detailed test needed
                             colors = ButtonDefaults.buttonColors(
