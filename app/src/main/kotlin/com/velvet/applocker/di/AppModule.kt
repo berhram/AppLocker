@@ -36,7 +36,7 @@ val appModule = module {
         AppCacheContract.RepositoryCache::class))
 
     single {
-        AppRepository(androidContext().packageManager, lockedAppsDao = get(), appCache = get())
+        AppRepository(appName = androidContext().packageName, androidContext().packageManager, lockedAppsDao = get(), appCache = get())
     }
 
     single {

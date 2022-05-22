@@ -10,6 +10,7 @@ import com.velvet.applocker.data.room.LockedAppsDao
 
 
 class AppRepository(
+    private val appName: String,
     private val packageManager: PackageManager,
     private val lockedAppsDao: LockedAppsDao,
     private val appCache: AppCacheContract.RepositoryCache
@@ -19,17 +20,17 @@ class AppRepository(
 
     fun changeFace(newFace: Face) {
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.applocker", "com.velvet.applocker.ui.main.MainActivity"),
+            ComponentName(appName, "${appName}.ui.main.MainActivity"),
             if (newFace == Face.DEFAULT) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.applocker", "com.velvet.applocker.MainActivityScheduleAlias"),
+            ComponentName(appName, "${appName}.MainActivityScheduleAlias"),
             if (newFace == Face.SCHEDULE) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
         packageManager.setComponentEnabledSetting(
-            ComponentName("com.velvet.applocker", "com.velvet.applocker.MainActivityFitnessAlias"),
+            ComponentName(appName, "${appName}.MainActivityFitnessAlias"),
             if (newFace == Face.FITNESS) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
@@ -50,24 +51,25 @@ class AppRepository(
                     name = loadLabel(packageManager) as String,
                     packageName = activityInfo.packageName,
                     icon = loadIcon(packageManager),
-                    isLocked = lockedAppPackageSet.contains(activityInfo.packageName),
-                    isChanged = false
+                    isLocked = lockedAppPackageSet.contains(activityInfo.packageName)
                     )
                 )
             }
         }
-        appCache.apps.tryEmit(output)
+        appCache.apps.tryEmit(output.sortedBy { it.name })
     }
 
     fun lockApps(apps: List<AppInfo>) {
         apps.forEach {
             lockedAppsDao.lockApp(it.toLockedApp())
         }
+        fetchApps()
     }
 
     fun unlockApps(apps: List<AppInfo>) {
         apps.forEach {
             lockedAppsDao.unlockApp(it.toLockedApp())
         }
+        fetchApps()
     }
 }
