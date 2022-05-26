@@ -1,4 +1,4 @@
-package com.velvet.applocker.ui.components
+package com.velvet.applocker.ui.composable
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable

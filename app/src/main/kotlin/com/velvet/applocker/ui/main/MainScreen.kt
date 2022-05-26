@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.util.lerp
@@ -17,12 +15,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.*
 import com.velvet.applocker.R
 import com.velvet.applocker.infra.ActionType
+import com.velvet.applocker.infra.Face
 import com.velvet.applocker.infra.TextType
-import com.velvet.applocker.ui.components.*
+import com.velvet.applocker.ui.composable.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.absoluteValue
 
@@ -30,6 +28,8 @@ import kotlin.math.absoluteValue
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     val state = viewModel.container.stateFlow.collectAsState().value
+    val setPasswordDialogState = remember { mutableStateOf(false) }
+    val setFaceDialogState = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
@@ -42,22 +42,34 @@ fun MainScreen(viewModel: MainViewModel) {
         }
     }
 
-    fun handleAction(action: Pair<ActionType, Intent>) {
-        when (action.first) {
-            ActionType.NAVIGATION -> { context.startActivity(action.second) }
+    LaunchedEffect(setPasswordDialogState) {
+        if (!setFaceDialogState.value) {
+            viewModel.onCloseSetPasswordDialog()
         }
     }
 
-    if (state.isChangePasswordDialogEnabled) {
+    fun handleAction(action: Pair<ActionType, Intent?>) {
+        when (action.first) {
+            ActionType.NAVIGATION -> { context.startActivity(action.second) }
+            ActionType.SET_FACE -> { setFaceDialogState.value = true }
+            ActionType.SET_PASSWORD -> { setPasswordDialogState.value = true }
+        }
+    }
+
+    if (setPasswordDialogState.value) {
         PasswordChangeDialog(
-            onDismiss = { viewModel.passwordDialogSwitch() },
+            state = setPasswordDialogState,
             setNewPassword = { viewModel.setNewPassword(it) },
-            errorTextId = state.newPasswordErrorTextId
+            errorTextId = state.setPasswordErrorTextId
         )
     }
 
-    if (state.isChangeFaceDialogEnabled) {
-        FacesDialog(onChoosing = { viewModel.faceChangeChoice(it) }, onDismiss = { viewModel.faceChangeSwitch() })
+    if (setFaceDialogState.value) {
+        FacesDialog(
+            onChoosing = { viewModel.faceChangeChoice(it) },
+            state = setFaceDialogState,
+            faces = Face.getDefaultFaces()
+        )
     }
 
     Surface(color = MaterialTheme.colors.background) {
@@ -103,7 +115,9 @@ fun MainScreen(viewModel: MainViewModel) {
                         text = stringResource(id = state.infoTextList[page].textId),
                         color = if (state.infoTextList[page].type == TextType.WARNING) {
                             MaterialTheme.colors.onError
-                        } else MaterialTheme.colors.onPrimary
+                        } else {
+                            MaterialTheme.colors.onPrimary
+                        }
                     )
                     state.infoTextList[page].action?.let { action ->
                         Spacer(modifier = Modifier.weight(1f))

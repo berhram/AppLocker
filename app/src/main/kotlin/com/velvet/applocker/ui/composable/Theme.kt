@@ -1,4 +1,4 @@
-package com.velvet.applocker.ui.components
+package com.velvet.applocker.ui.composable
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
