@@ -11,9 +11,25 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
     val colors = if (isSystemInDarkTheme()) {
-        darkColors(surface = Color(0xFF212121))
+        darkColors(
+            primary = Color(0xFF648CFD),
+            primaryVariant = Color(0xFF1E5FC9),
+            onPrimary = Color(0xFF000000),
+            secondary = Color(0xFF6CC9AD),
+            secondaryVariant = Color(0xFF38987E),
+            onSecondary = Color(0xFF000000),
+            surface = Color(0xFF212121)
+        )
     } else {
-        lightColors(surface = Color(0xFFEEEEEE))
+        lightColors(
+            primary = Color(0xFF1E5FC9),
+            primaryVariant = Color(0xFF003697),
+            onPrimary = Color(0xFFFFFFFF),
+            secondary = Color(0xFF38987E),
+            secondaryVariant = Color(0xFF02886B),
+            onSecondary = Color(0xFF000000),
+            surface = Color(0xFFEEEEEE)
+        )
     }
     CompositionLocalProvider(LocalSpacing provides Spacing()) {
         MaterialTheme (
