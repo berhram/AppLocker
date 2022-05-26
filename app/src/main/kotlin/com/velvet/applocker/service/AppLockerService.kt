@@ -27,6 +27,7 @@ class AppLockerService : Service() {
     private val notificationManager by inject<NotificationManager>()
     private val lockedAppsDao by inject<LockedAppsDao>()
     private var lastInvocationTime = System.currentTimeMillis()
+    private var lastInvokedApp: String? = null
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
     private val lockedAppPackages: HashMap<String, Long> = HashMap()
@@ -90,12 +91,14 @@ class AppLockerService : Service() {
             lockedAppPackages.contains(foregroundAppPackage) &&
             (System.currentTimeMillis() - lockedAppPackages[foregroundAppPackage]!! >= UNLOCKED_TIME_MILLIS) &&
             (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS) &&
-            (permissionChecker.isOverlayPermissionGranted())
+            (permissionChecker.isOverlayPermissionGranted()) &&
+            (foregroundAppPackage != lastInvokedApp)
         ) {
             val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             lastInvocationTime = System.currentTimeMillis()
+            lastInvokedApp = foregroundAppPackage
         }
     }
 
