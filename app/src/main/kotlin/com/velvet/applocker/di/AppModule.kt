@@ -20,7 +20,7 @@ val appModule = module {
         MainViewModel(appRepository = get(), appCache = get(), permissionChecker = get(), passwordRepository = get())
     }
 
-    viewModel { OverlayViewModel(clientCache = get()) }
+    viewModel { OverlayViewModel(clientCache = get(), repository = get()) }
 
     single {
         OverlayCache()
