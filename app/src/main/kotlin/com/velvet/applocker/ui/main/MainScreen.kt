@@ -131,7 +131,7 @@ fun MainScreen(viewModel: MainViewModel) {
                                 } else MaterialTheme.colors.primary,
                                 backgroundColor = if (state.infoTextList[page].type == TextType.WARNING) {
                                     MaterialTheme.colors.onError
-                                } else MaterialTheme.colors.onBackground
+                                } else MaterialTheme.colors.onPrimary
                             )
                         ) {
                             Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = stringResource(id = R.string.proceed))
