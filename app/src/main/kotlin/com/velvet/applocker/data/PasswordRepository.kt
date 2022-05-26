@@ -4,6 +4,8 @@ import com.velvet.applocker.data.cache.overlay.OverlayCacheContract
 import com.velvet.applocker.infra.Password
 import com.velvet.applocker.infra.ValidationStatus
 import com.velvet.applocker.data.room.PasswordDao
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.take
 
 class PasswordRepository(
     private val passwordDao: PasswordDao,
@@ -15,23 +17,18 @@ class PasswordRepository(
         )
     }
     
-    suspend fun observePassword() {
-        overlayCache.passwordFlow.collect {
-            it?.let {
-                if (passwordDao.isPasswordCreated() != 1) {
-                    overlayCache.statusFlow.tryEmit(ValidationStatus.FAILURE_NO_PASSWORD_SET)
-                } else {
-                    when (it) {
-                        passwordDao.getPassword().password -> {
-                            overlayCache.statusFlow.tryEmit(ValidationStatus.SUCCESS)
-                        }
-                        else -> {
-                            overlayCache.statusFlow.tryEmit(ValidationStatus.FAILURE_WRONG_PASSWORD)
-                        }
-                    }
+    suspend fun checkPassword() {
+        if (passwordDao.isPasswordCreated() != 1) {
+            overlayCache.status.send(ValidationStatus.FAILURE_NO_PASSWORD_SET)
+        } else {
+            when (overlayCache.password.receive()) {
+                passwordDao.getPassword().password -> {
+                    overlayCache.status.send(ValidationStatus.SUCCESS)
+                }
+                else -> {
+                    overlayCache.status.send(ValidationStatus.FAILURE_WRONG_PASSWORD)
                 }
             }
         }
     }
-
 }

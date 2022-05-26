@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +20,8 @@ import com.velvet.applocker.infra.ValidationStatus
 import com.velvet.applocker.setThemedContent
 import com.velvet.applocker.ui.main.MainScreen
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.getViewModel
@@ -33,7 +36,8 @@ class OverlayActivity : ComponentActivity() {
             OverlayScreen(viewModel = getViewModel())
         }
         lifecycleScope.launch(Dispatchers.IO) {
-            cache.statusFlow.collect {
+            cache.status.receiveAsFlow().collect {
+                Log.d("CAN", "received: $it")
                 when (it) {
                     ValidationStatus.SUCCESS -> {
                         setResult(Activity.RESULT_OK)
@@ -47,7 +51,6 @@ class OverlayActivity : ComponentActivity() {
                     ValidationStatus.FAILURE_WRONG_PASSWORD -> {
                         Toast.makeText(applicationContext, R.string.wrong_password, Toast.LENGTH_LONG).show()
                     }
-                    null -> {  }
                 }
             }
         }

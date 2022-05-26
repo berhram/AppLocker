@@ -1,7 +1,9 @@
 package com.velvet.applocker.ui.overlay
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.velvet.applocker.data.PasswordRepository
 import com.velvet.applocker.data.cache.overlay.OverlayCacheContract
 import com.velvet.applocker.infra.Password
 import kotlinx.coroutines.Dispatchers
@@ -12,9 +14,11 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import kotlin.math.log
 
 class OverlayViewModel(
-    private val clientCache: OverlayCacheContract.UiCache
+    private val clientCache: OverlayCacheContract.UiCache,
+    private val repository: PasswordRepository
     ) : ViewModel(), ContainerHost<OverlayState, OverlayEffect> {
 
     override val container: Container<OverlayState, OverlayEffect> = container(OverlayState())
@@ -32,7 +36,9 @@ class OverlayViewModel(
     fun confirm() = intent {
         viewModelScope.launch(Dispatchers.IO) {
             if (state.password.length >= Password.MIN_PASSWORD_LENGTH) {
-                clientCache.passwordFlow.tryEmit(state.password)
+                Log.d("CAN", "emitted ${state.password}")
+                clientCache.password.send(state.password)
+                repository.checkPassword()
             } else {
                 postSideEffect(OverlayEffect.PasswordTooShort)
             }
