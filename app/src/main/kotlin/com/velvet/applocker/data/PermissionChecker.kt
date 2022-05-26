@@ -9,28 +9,43 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
-private const val PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 15L
+private const val GUARANTEED_PERMISSION_CHECK_DELAY_MILLIS = 1000 * 60 * 15L
+private const val UNGUARANTEED_PERMISSION_CHECK_DELAY_MILLIS = 1000L
 
 class PermissionChecker(private val context: Context) {
+
+    private var delay = UNGUARANTEED_PERMISSION_CHECK_DELAY_MILLIS
 
     val usagePermissionFlow = flow {
         while (true) {
             emit(isUsageAccessPermissionGranted())
-            delay(PERMISSION_CHECK_DELAY_MILLIS)
+            delay(delay)
         }
     }.distinctUntilChanged()
 
     val overlayPermissionFlow = flow {
         while (true) {
             emit(isOverlayPermissionGranted())
-            delay(PERMISSION_CHECK_DELAY_MILLIS)
+            delay(delay)
         }
     }.distinctUntilChanged()
 
     val allPermissionFlow = flow {
         while (true) {
-            emit(isOverlayPermissionGranted() && isUsageAccessPermissionGranted())
-            delay(PERMISSION_CHECK_DELAY_MILLIS)
+            val allPermissionGranted = isOverlayPermissionGranted() && isUsageAccessPermissionGranted()
+            setDelay(allPermissionGranted)
+            emit(allPermissionGranted)
+            delay(delay)
+        }
+    }
+
+    private fun setDelay(isPermissionsGranted: Boolean) {
+        if (isPermissionsGranted) {
+            if (delay != GUARANTEED_PERMISSION_CHECK_DELAY_MILLIS) {
+                delay = GUARANTEED_PERMISSION_CHECK_DELAY_MILLIS
+            }
+        } else {
+            delay = UNGUARANTEED_PERMISSION_CHECK_DELAY_MILLIS
         }
     }
 

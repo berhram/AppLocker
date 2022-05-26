@@ -8,20 +8,44 @@ import com.velvet.applocker.R
 data class InfoText(
     val type: TextType,
     @StringRes val textId: Int,
-    val action: Pair<ActionType, Intent>? = null
+    val action: Pair<ActionType, Intent?>? = null
 ) {
     companion object {
-        fun createInstruction() : InfoText {
+        private fun createInstruction() : InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.instruction)
         }
 
-        fun createWelcome() : InfoText {
+        private fun createWelcome() : InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.welcome)
         }
 
-        fun createDevContacts() : InfoText {
+        private fun createDevContacts() : InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.dev_contacts)
         }
+
+        private fun createSetPassword() : InfoText {
+            return InfoText(
+                type = TextType.INFO,
+                textId = R.string.create_password_info,
+                action = ActionType.SET_PASSWORD to null
+            )
+        }
+
+        private fun createSetFace() : InfoText {
+            return InfoText(
+                type = TextType.INFO,
+                textId = R.string.set_face_info,
+                action = ActionType.SET_FACE to null
+            )
+        }
+
+        fun createEssentials() = listOf(
+            createWelcome(),
+            createInstruction(),
+            createSetPassword(),
+            createSetFace(),
+            createDevContacts()
+        )
 
         fun createUsageStatsWarning() : InfoText {
             return InfoText(
@@ -42,7 +66,9 @@ data class InfoText(
 }
 
 enum class ActionType {
-    NAVIGATION
+    NAVIGATION,
+    SET_PASSWORD,
+    SET_FACE
 }
 
 enum class TextType {

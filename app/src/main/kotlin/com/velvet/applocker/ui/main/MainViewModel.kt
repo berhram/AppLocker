@@ -26,6 +26,8 @@ class MainViewModel(
     ) : ViewModel(), ContainerHost<MainState, MainEffect> {
 
     override val container: Container<MainState, MainEffect> = container(MainState())
+    private var isUsageStatsPermissionGranted = false
+    private var isOverlayPermissionGranted = false
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -36,13 +38,13 @@ class MainViewModel(
             }
             launch {
                 permissionChecker.usagePermissionFlow.collect { granted ->
-                    intent { reduce { state.copy(isUsageStatsPermissionGranted = granted) } }
+                    isUsageStatsPermissionGranted = granted
                     recomposeInfoTexts()
                 }
             }
             launch {
                 permissionChecker.overlayPermissionFlow.collect { granted ->
-                    intent { reduce { state.copy(isOverlayPermissionGranted = granted) } }
+                    isOverlayPermissionGranted = granted
                     recomposeInfoTexts()
                 }
             }
@@ -54,12 +56,7 @@ class MainViewModel(
 
     fun faceChangeChoice(newFace: Face) = intent {
         appRepository.changeFace(newFace)
-        reduce { state.copy(isChangeFaceDialogEnabled = false) }
         postSideEffect(MainEffect.IconChanged)
-    }
-
-    fun faceChangeSwitch() = intent {
-        reduce { state.copy(isChangeFaceDialogEnabled = !state.isChangeFaceDialogEnabled) }
     }
 
     //Lock
@@ -71,24 +68,21 @@ class MainViewModel(
 
     //Password change
 
-    fun passwordDialogSwitch() = intent {
-        if (state.isChangePasswordDialogEnabled) {
-            reduce { state.resetAndClosePasswordDialog() }
+    fun setNewPassword(newPassword: String) = intent {
+        if (newPassword.length > Password.MAX_PASSWORD_LENGTH) {
+            reduce { state.copy(setPasswordErrorTextId = R.string.too_long) }
+        } else if (newPassword.length < Password.MIN_PASSWORD_LENGTH) {
+            reduce { state.copy(setPasswordErrorTextId = R.string.password_too_short) }
+        } else if (!newPassword.isDigitsOnly()) {
+            reduce { state.copy(setPasswordErrorTextId = R.string.password_not_digits) }
         } else {
-            reduce { state.copy(isChangePasswordDialogEnabled = true) }
+            passwordRepository.setNewPassword(newPassword = newPassword)
         }
     }
 
-    fun setNewPassword(newPassword: String) = intent {
-        if (newPassword.length > Password.MAX_PASSWORD_LENGTH) {
-            reduce { state.copy(newPasswordErrorTextId = R.string.too_long) }
-        } else if (newPassword.length < Password.MIN_PASSWORD_LENGTH) {
-            reduce { state.copy(newPasswordErrorTextId = R.string.password_too_short) }
-        } else if (!newPassword.isDigitsOnly()) {
-            reduce { state.copy(newPasswordErrorTextId = R.string.password_not_digits) }
-        } else {
-            passwordRepository.setNewPassword(newPassword = newPassword)
-            passwordDialogSwitch()
+    fun onCloseSetPasswordDialog() = intent {
+        reduce {
+            state.copy(setPasswordErrorTextId = null)
         }
     }
 
@@ -96,14 +90,13 @@ class MainViewModel(
 
     private fun recomposeInfoTexts() = intent {
         val newList: ArrayList<InfoText> = ArrayList()
-        newList.add(InfoText.createWelcome())
-        if (!state.isUsageStatsPermissionGranted) {
+        newList.addAll(InfoText.createEssentials())
+        if (isUsageStatsPermissionGranted) {
             newList.add(InfoText.createUsageStatsWarning())
         }
-        if (!state.isOverlayPermissionGranted) {
+        if (isOverlayPermissionGranted) {
             newList.add(InfoText.createOverlayWarning())
         }
-        newList.addAll(listOf(InfoText.createInstruction(), InfoText.createDevContacts()))
         reduce {
             state.copy(infoTextList = newList)
         }

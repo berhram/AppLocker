@@ -3,6 +3,7 @@ package com.velvet.applocker.data
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import com.velvet.applocker.R
 import com.velvet.applocker.data.cache.app.AppCacheContract
 import com.velvet.applocker.infra.AppInfo
 import com.velvet.applocker.infra.Face
@@ -17,23 +18,36 @@ class AppRepository(
     ) {
 
     private val lockedAppPackageSet = HashSet<String>()
+    val faces = listOf(
+        Face(
+            textId = R.string.app_name,
+            iconId = R.drawable.launcher,
+            name = "ui.main.MainActivity"
+        ),
+        Face(
+            textId = R.string.app_name,
+            iconId = R.drawable.launcher,
+            name = "ui.main.MainActivity"
+        ),
+        Face(
+            textId = R.string.app_name,
+            iconId = R.drawable.launcher,
+            name = "ui.main.MainActivity"
+        )
+    )
 
     fun changeFace(newFace: Face) {
-        packageManager.setComponentEnabledSetting(
-            ComponentName(appName, "${appName}.ui.main.MainActivity"),
-            if (newFace == Face.DEFAULT) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-        packageManager.setComponentEnabledSetting(
-            ComponentName(appName, "${appName}.MainActivityScheduleAlias"),
-            if (newFace == Face.SCHEDULE) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
-        packageManager.setComponentEnabledSetting(
-            ComponentName(appName, "${appName}.MainActivityFitnessAlias"),
-            if (newFace == Face.FITNESS) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )
+        for (face in Face.getDefaultFaces()) {
+            packageManager.setComponentEnabledSetting(
+                ComponentName(appName, "${appName}.${newFace.name}"),
+                if (newFace == face) {
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                } else {
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                },
+                PackageManager.DONT_KILL_APP
+            )
+        }
     }
 
     fun fetchApps() {
