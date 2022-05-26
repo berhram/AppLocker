@@ -26,8 +26,8 @@ class MainViewModel(
     ) : ViewModel(), ContainerHost<MainState, MainEffect> {
 
     override val container: Container<MainState, MainEffect> = container(MainState())
-    private var isUsageStatsPermissionGranted = false
-    private var isOverlayPermissionGranted = false
+    private var isUsageStatsPermissionGranted: Boolean? = null
+    private var isOverlayPermissionGranted: Boolean? = null
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -90,13 +90,17 @@ class MainViewModel(
 
     private fun recomposeInfoTexts() = intent {
         val newList: ArrayList<InfoText> = ArrayList()
+        isOverlayPermissionGranted?.let {
+            if (!it) {
+                newList.add(InfoText.createOverlayWarning())
+            }
+        }
+        isUsageStatsPermissionGranted?.let {
+            if (!it) {
+                newList.add(InfoText.createUsageStatsWarning())
+            }
+        }
         newList.addAll(InfoText.createEssentials())
-        if (isUsageStatsPermissionGranted) {
-            newList.add(InfoText.createUsageStatsWarning())
-        }
-        if (isOverlayPermissionGranted) {
-            newList.add(InfoText.createOverlayWarning())
-        }
         reduce {
             state.copy(infoTextList = newList)
         }
