@@ -15,6 +15,7 @@ import com.velvet.applocker.data.PermissionChecker
 import com.velvet.applocker.receiver.ScreenStateReceiver
 import com.velvet.applocker.data.room.LockedAppsDao
 import com.velvet.applocker.receiver.UnlockResultReceiver
+import com.velvet.applocker.receiver.UnlockResultReceiver.Companion.APP_UNLOCKED
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
@@ -116,7 +117,7 @@ class AppLockerService : Service() {
 
     private fun onLockedAppForeground(lockedAppPackage: String) {
         if (
-            (System.currentTimeMillis() - lockedAppsPackages[lockedAppPackage]!! <= UNLOCKED_TIME_MILLIS) &&
+            (System.currentTimeMillis() - lockedAppsPackages[lockedAppPackage]!! >= UNLOCKED_TIME_MILLIS) &&
             (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS) &&
             (permissionChecker.isOverlayPermissionGranted())
         ) {
@@ -145,7 +146,7 @@ class AppLockerService : Service() {
 
     private fun registerUnlockResultReceiver() {
         val filter = IntentFilter()
-        filter.addAction("APP_UNLOCKED")
+        filter.addAction(APP_UNLOCKED)
         registerReceiver(unlockResultReceiver, filter)
     }
 

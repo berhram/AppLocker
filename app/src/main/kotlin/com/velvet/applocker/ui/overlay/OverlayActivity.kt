@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.velvet.applocker.R
 import com.velvet.applocker.data.cache.overlay.OverlayCacheContract
 import com.velvet.applocker.infra.ValidationStatus
+import com.velvet.applocker.receiver.UnlockResultReceiver.Companion.APP_UNLOCKED
 import com.velvet.applocker.setThemedContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -30,6 +31,7 @@ class OverlayActivity : ComponentActivity() {
             cache.status.receiveAsFlow().collect {
                 when (it) {
                     ValidationStatus.SUCCESS -> {
+                        sendBroadcast(Intent(APP_UNLOCKED))
                         setResult(Activity.RESULT_OK)
                         finish()
                     }

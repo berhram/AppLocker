@@ -10,7 +10,7 @@ import com.velvet.applocker.ui.composable.SystemUiSetup
 fun ComponentActivity.setThemedContent(content: @Composable () -> Unit) {
     this.actionBar?.hide()
     setContent {
-        AppTheme() {
+        AppTheme {
             SystemUiSetup()
             content()
         }

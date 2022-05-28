@@ -9,7 +9,11 @@ class UnlockResultReceiver(
 ) : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
-            "APP_UNLOCKED" -> onSuccessUnlock()
+            APP_UNLOCKED -> onSuccessUnlock()
         }
+    }
+
+    companion object {
+        const val APP_UNLOCKED = "APP_UNLOCKED"
     }
 }
