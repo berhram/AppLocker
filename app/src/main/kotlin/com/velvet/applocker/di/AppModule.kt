@@ -17,26 +17,42 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        MainViewModel(appRepository = get(), appCache = get(), permissionChecker = get(), passwordRepository = get())
+        MainViewModel(
+            appRepository = get(),
+            appCache = get(),
+            permissionChecker = get(),
+            passwordRepository = get()
+        )
     }
 
     viewModel { OverlayViewModel(clientCache = get(), repository = get()) }
 
     single {
         OverlayCache()
-    }.binds(arrayOf(
-        OverlayCacheContract.ActivityCache::class,
-        OverlayCacheContract.UiCache::class,
-        OverlayCacheContract.RepositoryCache::class))
+    }.binds(
+        arrayOf(
+            OverlayCacheContract.ActivityCache::class,
+            OverlayCacheContract.UiCache::class,
+            OverlayCacheContract.RepositoryCache::class
+        )
+    )
 
     single {
         AppCache()
-    }.binds(arrayOf(
-        AppCacheContract.UiCache::class,
-        AppCacheContract.RepositoryCache::class))
+    }.binds(
+        arrayOf(
+            AppCacheContract.UiCache::class,
+            AppCacheContract.RepositoryCache::class
+        )
+    )
 
     single {
-        AppRepository(appName = androidContext().packageName, androidContext().packageManager, lockedAppsDao = get(), appCache = get())
+        AppRepository(
+            appName = androidContext().packageName,
+            androidContext().packageManager,
+            lockedAppsDao = get(),
+            appCache = get()
+        )
     }
 
     single {
@@ -44,11 +60,13 @@ val appModule = module {
     }
 
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.DB_NAME).build().appDao()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.DB_NAME).build()
+            .appDao()
     }
 
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.DB_NAME).build().passwordDao()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, AppDatabase.DB_NAME).build()
+            .passwordDao()
     }
 
     single {
@@ -62,6 +80,4 @@ val appModule = module {
     single {
         NotificationManager(androidContext())
     }
-
-
 }

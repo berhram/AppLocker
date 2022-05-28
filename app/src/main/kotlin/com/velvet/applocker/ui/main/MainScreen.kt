@@ -50,9 +50,15 @@ fun MainScreen(viewModel: MainViewModel) {
 
     fun handleAction(action: Pair<ActionType, Intent?>) {
         when (action.first) {
-            ActionType.NAVIGATION -> { context.startActivity(action.second) }
-            ActionType.SET_FACE -> { setFaceDialogState.value = true }
-            ActionType.SET_PASSWORD -> { setPasswordDialogState.value = true }
+            ActionType.NAVIGATION -> {
+                context.startActivity(action.second)
+            }
+            ActionType.SET_FACE -> {
+                setFaceDialogState.value = true
+            }
+            ActionType.SET_PASSWORD -> {
+                setPasswordDialogState.value = true
+            }
         }
     }
 
@@ -73,7 +79,10 @@ fun MainScreen(viewModel: MainViewModel) {
     }
 
     Surface(color = MaterialTheme.colors.background) {
-        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val pagerState = rememberPagerState()
             HorizontalPager(
                 modifier = Modifier
@@ -88,27 +97,28 @@ fun MainScreen(viewModel: MainViewModel) {
                 ),
                 state = pagerState
             ) { page ->
-                Column(modifier = Modifier
-                    .graphicsLayer {
-                        val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale
+                Column(
+                    modifier = Modifier
+                        .graphicsLayer {
+                            val pageOffset = calculateCurrentOffsetForPage(page).absoluteValue
+                            lerp(
+                                start = 0.85f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            ).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
+                            }
+                            alpha = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
                         }
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    }
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(if (state.infoTextList[page].type == TextType.WARNING) MaterialTheme.colors.error else MaterialTheme.colors.primary)
-                    .aspectRatio(1f)
-                    .padding(MaterialTheme.spacing.large),
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(if (state.infoTextList[page].type == TextType.WARNING) MaterialTheme.colors.error else MaterialTheme.colors.primary)
+                        .aspectRatio(1f)
+                        .padding(MaterialTheme.spacing.large),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
@@ -124,7 +134,6 @@ fun MainScreen(viewModel: MainViewModel) {
                         OutlinedButton(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = { handleAction(action) },
-                            //TODO more detailed test needed
                             colors = ButtonDefaults.buttonColors(
                                 contentColor = if (state.infoTextList[page].type == TextType.WARNING) {
                                     MaterialTheme.colors.error
@@ -134,12 +143,18 @@ fun MainScreen(viewModel: MainViewModel) {
                                 } else MaterialTheme.colors.onPrimary
                             )
                         ) {
-                            Icon(imageVector = Icons.Filled.ArrowForward, contentDescription = stringResource(id = R.string.proceed))
+                            Icon(
+                                imageVector = Icons.Filled.ArrowForward,
+                                contentDescription = stringResource(id = R.string.proceed)
+                            )
                         }
                     }
                 }
             }
-            HorizontalPagerIndicator(pagerState = pagerState, Modifier.padding(MaterialTheme.spacing.small))
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                Modifier.padding(MaterialTheme.spacing.small)
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -152,4 +167,3 @@ fun MainScreen(viewModel: MainViewModel) {
         }
     }
 }
-

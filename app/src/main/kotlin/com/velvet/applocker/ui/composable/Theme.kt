@@ -32,7 +32,7 @@ fun AppTheme(content: @Composable () -> Unit) {
         )
     }
     CompositionLocalProvider(LocalSpacing provides Spacing()) {
-        MaterialTheme (
+        MaterialTheme(
             colors = colors,
             content = content,
             typography = MaterialTheme.typography,

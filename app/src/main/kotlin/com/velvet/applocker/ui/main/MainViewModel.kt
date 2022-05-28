@@ -23,7 +23,7 @@ class MainViewModel(
     private val appCache: AppCacheContract.UiCache,
     private val permissionChecker: PermissionChecker,
     private val passwordRepository: PasswordRepository
-    ) : ViewModel(), ContainerHost<MainState, MainEffect> {
+) : ViewModel(), ContainerHost<MainState, MainEffect> {
 
     override val container: Container<MainState, MainEffect> = container(MainState())
     private var isUsageStatsPermissionGranted: Boolean? = null
@@ -48,7 +48,7 @@ class MainViewModel(
                     recomposeInfoTexts()
                 }
             }
-            launch { appRepository.fetchApps() }
+            appRepository.fetchApps()
         }
     }
 
@@ -62,8 +62,10 @@ class MainViewModel(
     //Lock
 
     fun applyLock(changedList: List<AppInfo>) = intent {
-        appRepository.lockApps(state.appList.filter { changedList.contains(it) }.filter { it.isLocked.not() })
-        appRepository.unlockApps(state.appList.filter { changedList.contains(it) }.filter { it.isLocked })
+        appRepository.lockApps(state.appList.filter { changedList.contains(it) }
+            .filter { it.isLocked.not() })
+        appRepository.unlockApps(state.appList.filter { changedList.contains(it) }
+            .filter { it.isLocked })
     }
 
     //Password change

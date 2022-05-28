@@ -8,7 +8,7 @@ data class AppInfo(
     val isLocked: Boolean,
     val icon: Drawable
 ) {
-    fun toLockedApp() : LockedApp {
+    fun toLockedApp(): LockedApp {
         return LockedApp(packageName)
     }
 }

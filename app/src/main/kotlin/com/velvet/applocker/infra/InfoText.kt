@@ -11,19 +11,19 @@ data class InfoText(
     val action: Pair<ActionType, Intent?>? = null
 ) {
     companion object {
-        private fun createInstruction() : InfoText {
+        private fun createInstruction(): InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.instruction)
         }
 
-        private fun createWelcome() : InfoText {
+        private fun createWelcome(): InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.welcome)
         }
 
-        private fun createDevContacts() : InfoText {
+        private fun createDevContacts(): InfoText {
             return InfoText(type = TextType.INFO, textId = R.string.dev_contacts)
         }
 
-        private fun createSetPassword() : InfoText {
+        private fun createSetPassword(): InfoText {
             return InfoText(
                 type = TextType.INFO,
                 textId = R.string.create_password_info,
@@ -31,7 +31,7 @@ data class InfoText(
             )
         }
 
-        private fun createSetFace() : InfoText {
+        private fun createSetFace(): InfoText {
             return InfoText(
                 type = TextType.INFO,
                 textId = R.string.set_face_info,
@@ -47,7 +47,7 @@ data class InfoText(
             createDevContacts()
         )
 
-        fun createUsageStatsWarning() : InfoText {
+        fun createUsageStatsWarning(): InfoText {
             return InfoText(
                 type = TextType.WARNING,
                 textId = R.string.usage_stats_warning,
@@ -55,7 +55,7 @@ data class InfoText(
             )
         }
 
-        fun createOverlayWarning() : InfoText {
+        fun createOverlayWarning(): InfoText {
             return InfoText(
                 type = TextType.WARNING,
                 textId = R.string.overlay_warning,

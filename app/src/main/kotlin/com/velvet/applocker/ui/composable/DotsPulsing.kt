@@ -46,7 +46,10 @@ fun DotsPulsing(size: Dp, delayUnit: Int) {
     val scale2 by animateScaleWithDelay(delayUnit)
     val scale3 by animateScaleWithDelay(delayUnit * 2)
 
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
         val spaceSize = 2.dp
 
         Dot(scale1)

@@ -3,7 +3,6 @@ package com.velvet.applocker.ui.composable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
@@ -25,7 +24,10 @@ fun FacesDialog(
     state: MutableState<Boolean>
 ) {
     Dialog({ state.value = false }) {
-        Surface(modifier = Modifier.clip(MaterialTheme.shapes.medium), color = MaterialTheme.colors.surface) {
+        Surface(
+            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+            color = MaterialTheme.colors.surface
+        ) {
             Column(Modifier.padding(MaterialTheme.spacing.small)) {
                 Text(
                     text = stringResource(id = R.string.face_change_dialog_title),
@@ -37,7 +39,8 @@ fun FacesDialog(
 
                 Text(
                     text = stringResource(id = R.string.face_change_dialog_text),
-                    style = MaterialTheme.typography.body1, color = MaterialTheme.colors.onBackground
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.onBackground
                 )
 
                 Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
@@ -56,7 +59,9 @@ fun FacesDialog(
                     }
                 }
                 Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
-                OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { state.value = false }) {
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { state.value = false }) {
                     Text(text = stringResource(id = R.string.cancel))
                 }
             }

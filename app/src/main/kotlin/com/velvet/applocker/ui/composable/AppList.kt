@@ -19,15 +19,23 @@ fun AppList(appList: List<AppInfo>, onChoosing: (List<AppInfo>) -> Unit) {
 
     val changedList = remember { mutableStateListOf<AppInfo>() }
 
+    LaunchedEffect(appList) {
+        changedList.clear()
+    }
+
     Surface(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colors.background) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f),
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
+                verticalArrangement = Arrangement.Center
+            ) {
                 if (appList.isEmpty()) {
                     item {
                         DotsPulsing(size = 20.dp, delayUnit = 300)
@@ -47,12 +55,26 @@ fun AppList(appList: List<AppInfo>, onChoosing: (List<AppInfo>) -> Unit) {
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                OutlinedButton(modifier = Modifier.weight(1f), onClick = { changedList.clear() }, enabled = (changedList.isNotEmpty())) {
-                    Icon(imageVector = Icons.Filled.RemoveDone, contentDescription = stringResource(id = R.string.cancel))
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { changedList.clear() },
+                    enabled = (changedList.isNotEmpty())
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.RemoveDone,
+                        contentDescription = stringResource(id = R.string.cancel)
+                    )
                 }
                 Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
-                Button(modifier = Modifier.weight(4f), onClick = { onChoosing(changedList) }, enabled = (changedList.isNotEmpty())) {
-                    Icon(imageVector = Icons.Filled.Done, contentDescription = stringResource(id = R.string.apply))
+                Button(
+                    modifier = Modifier.weight(4f),
+                    onClick = { onChoosing(changedList) },
+                    enabled = (changedList.isNotEmpty())
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = stringResource(id = R.string.apply)
+                    )
                     Spacer(modifier = Modifier.size(MaterialTheme.spacing.extraSmall))
                     Text(text = stringResource(id = R.string.apply))
                 }

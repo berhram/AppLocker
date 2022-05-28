@@ -10,7 +10,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun appDao(): LockedAppsDao
 
-    abstract fun passwordDao() : PasswordDao
+    abstract fun passwordDao(): PasswordDao
 
     companion object {
         const val DB_NAME = "app-database"

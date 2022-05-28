@@ -32,7 +32,8 @@ class PermissionChecker(private val context: Context) {
 
     val allPermissionFlow = flow {
         while (true) {
-            val allPermissionGranted = isOverlayPermissionGranted() && isUsageAccessPermissionGranted()
+            val allPermissionGranted =
+                isOverlayPermissionGranted() && isUsageAccessPermissionGranted()
             setDelay(allPermissionGranted)
             emit(allPermissionGranted)
             delay(delay)
@@ -49,7 +50,7 @@ class PermissionChecker(private val context: Context) {
         }
     }
 
-    fun isOverlayPermissionGranted() : Boolean {
+    fun isOverlayPermissionGranted(): Boolean {
         return Settings.canDrawOverlays(context)
     }
 
@@ -63,8 +64,7 @@ class PermissionChecker(private val context: Context) {
                     AppOpsManager.OPSTR_GET_USAGE_STATS,
                     applicationInfo.uid, applicationInfo.packageName
                 )
-            }
-            else {
+            } else {
                 appOpsManager.checkOpNoThrow(
                     AppOpsManager.OPSTR_GET_USAGE_STATS,
                     applicationInfo.uid, applicationInfo.packageName

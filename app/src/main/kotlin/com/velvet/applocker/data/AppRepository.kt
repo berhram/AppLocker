@@ -3,38 +3,19 @@ package com.velvet.applocker.data
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
-import com.velvet.applocker.R
 import com.velvet.applocker.data.cache.app.AppCacheContract
 import com.velvet.applocker.infra.AppInfo
 import com.velvet.applocker.infra.Face
 import com.velvet.applocker.data.room.LockedAppsDao
-
 
 class AppRepository(
     private val appName: String,
     private val packageManager: PackageManager,
     private val lockedAppsDao: LockedAppsDao,
     private val appCache: AppCacheContract.RepositoryCache
-    ) {
+) {
 
     private val lockedAppPackageSet = HashSet<String>()
-    val faces = listOf(
-        Face(
-            textId = R.string.app_name,
-            iconId = R.drawable.launcher,
-            name = "ui.main.MainActivity"
-        ),
-        Face(
-            textId = R.string.app_name,
-            iconId = R.drawable.launcher,
-            name = "ui.main.MainActivity"
-        ),
-        Face(
-            textId = R.string.app_name,
-            iconId = R.drawable.launcher,
-            name = "ui.main.MainActivity"
-        )
-    )
 
     fun changeFace(newFace: Face) {
         for (face in Face.getDefaultFaces()) {
@@ -62,10 +43,10 @@ class AppRepository(
             with(resolveInfo) {
                 output.add(
                     AppInfo(
-                    name = loadLabel(packageManager) as String,
-                    packageName = activityInfo.packageName,
-                    icon = loadIcon(packageManager),
-                    isLocked = lockedAppPackageSet.contains(activityInfo.packageName)
+                        name = loadLabel(packageManager) as String,
+                        packageName = activityInfo.packageName,
+                        icon = loadIcon(packageManager),
+                        isLocked = lockedAppPackageSet.contains(activityInfo.packageName)
                     )
                 )
             }

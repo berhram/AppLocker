@@ -20,12 +20,13 @@ import com.velvet.applocker.xor
 
 @Composable
 fun AppItem(item: AppInfo, changedList: MutableList<AppInfo>) {
-    Surface(modifier = Modifier
-        .fillMaxWidth()
-        .padding(
-            vertical = MaterialTheme.spacing.extraSmall,
-            horizontal = MaterialTheme.spacing.medium
-        ),
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                vertical = MaterialTheme.spacing.extraSmall,
+                horizontal = MaterialTheme.spacing.medium
+            ),
         color = MaterialTheme.colors.background
     ) {
         Row(
@@ -48,7 +49,8 @@ fun AppItem(item: AppInfo, changedList: MutableList<AppInfo>) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.body1,
-                color = if (changedList.contains(item)) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface)
+                color = if (changedList.contains(item)) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface
+            )
             Spacer(modifier = Modifier.weight(1f))
             Checkbox(
                 checked = changedList.contains(item) xor item.isLocked,

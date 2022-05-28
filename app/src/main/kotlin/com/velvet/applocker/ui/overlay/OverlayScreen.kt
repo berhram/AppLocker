@@ -22,7 +22,11 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
     LaunchedEffect(viewModel) {
         viewModel.container.sideEffectFlow.collectLatest {
             when (it) {
-                OverlayEffect.PasswordTooShort -> Toast.makeText(context, R.string.password_too_short, Toast.LENGTH_LONG).show()
+                OverlayEffect.PasswordTooShort -> Toast.makeText(
+                    context,
+                    R.string.password_too_short,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
@@ -33,11 +37,16 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Row(Modifier.fillMaxWidth(),
+                Row(
+                    Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = state.password, style = MaterialTheme.typography.h3, color = MaterialTheme.colors.onBackground)
+                    Text(
+                        text = state.password,
+                        style = MaterialTheme.typography.h3,
+                        color = MaterialTheme.colors.onBackground
+                    )
                 }
             }
             Column(
@@ -51,13 +60,19 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(1) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(1) }) {
                         Text(text = "1", style = MaterialTheme.typography.h6)
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(2) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(2) }) {
                         Text(text = "2", style = MaterialTheme.typography.h6)
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(3) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(3) }) {
                         Text(text = "3", style = MaterialTheme.typography.h6)
                     }
                 }
@@ -66,13 +81,19 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(4) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(4) }) {
                         Text(text = "4", style = MaterialTheme.typography.h6)
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(5) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(5) }) {
                         Text(text = "5", style = MaterialTheme.typography.h6)
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(6) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(6) }) {
                         Text(text = "6", style = MaterialTheme.typography.h6)
                     }
                 }
@@ -81,13 +102,19 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(7) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(7) }) {
                         Text(text = "7", style = MaterialTheme.typography.h6)
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(8) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(8) }) {
                         Text(text = "8", style = MaterialTheme.typography.h6)
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(9) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(9) }) {
                         Text(text = "9", style = MaterialTheme.typography.h6)
                     }
                 }
@@ -96,14 +123,28 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    IconButton(modifier = Modifier.size(buttonSize), onClick = { viewModel.deleteDigit() }) {
-                        Icon(modifier = Modifier.fillMaxSize(), imageVector = Icons.Filled.ArrowLeft, contentDescription = "Remove icon")
+                    IconButton(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.deleteDigit() }) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            imageVector = Icons.Filled.ArrowLeft,
+                            contentDescription = "Remove icon"
+                        )
                     }
-                    Button(modifier = Modifier.size(buttonSize), onClick = { viewModel.enterDigit(0) }) {
+                    Button(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.enterDigit(0) }) {
                         Text(text = "0", style = MaterialTheme.typography.h6)
                     }
-                    IconButton(modifier = Modifier.size(buttonSize), onClick = { viewModel.confirm() }) {
-                        Icon(modifier = Modifier.fillMaxSize(), imageVector = Icons.Filled.ArrowRight, contentDescription = "Enter icon")
+                    IconButton(
+                        modifier = Modifier.size(buttonSize),
+                        onClick = { viewModel.confirm() }) {
+                        Icon(
+                            modifier = Modifier.fillMaxSize(),
+                            imageVector = Icons.Filled.ArrowRight,
+                            contentDescription = "Enter icon"
+                        )
                     }
                 }
             }

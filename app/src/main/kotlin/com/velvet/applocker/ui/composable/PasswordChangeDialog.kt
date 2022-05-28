@@ -68,7 +68,9 @@ fun PasswordChangeDialog(
                 Spacer(modifier = Modifier.size(MaterialTheme.spacing.small))
 
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedButton(modifier = Modifier.weight(1f), onClick = { state.value = false }) {
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = { state.value = false }) {
                         Text(text = stringResource(id = R.string.cancel))
                     }
 

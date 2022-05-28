@@ -14,6 +14,7 @@ import com.velvet.applocker.data.NotificationManager.Companion.NOTIFICATION_ID_A
 import com.velvet.applocker.data.PermissionChecker
 import com.velvet.applocker.receiver.ScreenStateReceiver
 import com.velvet.applocker.data.room.LockedAppsDao
+import com.velvet.applocker.receiver.UnlockResultReceiver
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
@@ -23,18 +24,33 @@ private const val UNLOCKED_TIME_MILLIS = 1000 * 60 * 30
 class AppLockerService : Service() {
 
     private val appForegroundFLow by inject<CurrentAppChecker>()
+
     private val permissionChecker by inject<PermissionChecker>()
+
     private val notificationManager by inject<NotificationManager>()
+
     private val lockedAppsDao by inject<LockedAppsDao>()
+
     private var lastInvocationTime = System.currentTimeMillis()
+
     private var lastInvokedApp: String? = null
+
     private val job = SupervisorJob()
+
     private val scope = CoroutineScope(Dispatchers.IO + job)
-    private val lockedAppPackages: HashMap<String, Long> = HashMap()
+
+    private val lockedAppsPackages: HashMap<String, Long> = HashMap()
+
     private var observeForegroundAppsJob: Job? = null
+
     private val screenStateReceiver = ScreenStateReceiver(
         onOnScreen = { observeForegroundApp() },
-        onOffScreen = { stopObserveForegroundApp() })
+        onOffScreen = { stopObserveForegroundApp() }
+    )
+
+    private val unlockResultReceiver = UnlockResultReceiver(
+        onSuccessUnlock = { successUnlock() }
+    )
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -48,14 +64,19 @@ class AppLockerService : Service() {
         super.onCreate()
         observeForegroundApp()
         observeLockedApps()
-        registerScreenReceiver()
         showServiceNotification()
         observePermissionChecker()
+        registerScreenReceiver()
+        registerUnlockResultReceiver()
     }
 
     override fun onDestroy() {
-        ContextCompat.startForegroundService(applicationContext, Intent(applicationContext, AppLockerService::class.java))
+        ContextCompat.startForegroundService(
+            applicationContext,
+            Intent(applicationContext, AppLockerService::class.java)
+        )
         unregisterScreenReceiver()
+        unregisterUnlockResultReceiver()
         job.cancel()
     }
 
@@ -64,12 +85,17 @@ class AppLockerService : Service() {
     private fun observeLockedApps() {
         scope.launch {
             lockedAppsDao.getLockedAppsDistinctUntilChanged().collect { apps ->
-                lockedAppPackages.clear()
                 apps.forEach { app ->
-                    lockedAppPackages[app.packageName] = 0
+                    if (!lockedAppsPackages.contains(app.packageName)) {
+                        lockedAppsPackages[app.packageName] = 0
+                    }
                 }
             }
         }
+    }
+
+    private fun successUnlock() {
+        lastInvokedApp?.let { lockedAppsPackages[it] = System.currentTimeMillis() }
     }
 
     //Foreground app
@@ -77,7 +103,9 @@ class AppLockerService : Service() {
     private fun observeForegroundApp() {
         scope.launch {
             appForegroundFLow.get().collect { foregroundAppPackage ->
-                onAppForeground(foregroundAppPackage)
+                if (lockedAppsPackages.contains(foregroundAppPackage)) {
+                    onLockedAppForeground(foregroundAppPackage)
+                }
             }
         }
     }
@@ -86,33 +114,43 @@ class AppLockerService : Service() {
         observeForegroundAppsJob?.cancel()
     }
 
-    private fun onAppForeground(foregroundAppPackage: String) {
+    private fun onLockedAppForeground(lockedAppPackage: String) {
         if (
-            lockedAppPackages.contains(foregroundAppPackage) &&
-            (System.currentTimeMillis() - lockedAppPackages[foregroundAppPackage]!! >= UNLOCKED_TIME_MILLIS) &&
+            (System.currentTimeMillis() - lockedAppsPackages[lockedAppPackage]!! <= UNLOCKED_TIME_MILLIS) &&
             (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS) &&
-            (permissionChecker.isOverlayPermissionGranted()) &&
-            (foregroundAppPackage != lastInvokedApp)
+            (permissionChecker.isOverlayPermissionGranted())
         ) {
-            val intent = OverlayActivity.newIntent(applicationContext, foregroundAppPackage)
+            val intent = OverlayActivity.newIntent(applicationContext, lockedAppPackage)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             lastInvocationTime = System.currentTimeMillis()
-            lastInvokedApp = foregroundAppPackage
+            lastInvokedApp = lockedAppPackage
         }
     }
 
     //Screen state receiver
 
     private fun registerScreenReceiver() {
-        val screenFilter = IntentFilter()
-        screenFilter.addAction(Intent.ACTION_SCREEN_ON)
-        screenFilter.addAction(Intent.ACTION_SCREEN_OFF)
-        registerReceiver(screenStateReceiver, screenFilter)
+        val filter = IntentFilter()
+        filter.addAction(Intent.ACTION_SCREEN_ON)
+        filter.addAction(Intent.ACTION_SCREEN_OFF)
+        registerReceiver(screenStateReceiver, filter)
     }
 
     private fun unregisterScreenReceiver() {
         unregisterReceiver(screenStateReceiver)
+    }
+
+    //Unlocked app receiver
+
+    private fun registerUnlockResultReceiver() {
+        val filter = IntentFilter()
+        filter.addAction("APP_UNLOCKED")
+        registerReceiver(unlockResultReceiver, filter)
+    }
+
+    private fun unregisterUnlockResultReceiver() {
+        unregisterReceiver(unlockResultReceiver)
     }
 
     //Permission checker
@@ -145,6 +183,7 @@ class AppLockerService : Service() {
     }
 
     private fun hidePermissionNeedNotification() {
-        NotificationManagerCompat.from(applicationContext).cancel(NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED)
+        NotificationManagerCompat.from(applicationContext)
+            .cancel(NOTIFICATION_ID_APPLOCKER_PERMISSION_NEED)
     }
 }

@@ -4,8 +4,6 @@ import com.velvet.applocker.data.cache.overlay.OverlayCacheContract
 import com.velvet.applocker.infra.Password
 import com.velvet.applocker.infra.ValidationStatus
 import com.velvet.applocker.data.room.PasswordDao
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.take
 
 class PasswordRepository(
     private val passwordDao: PasswordDao,

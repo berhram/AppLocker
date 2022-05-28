@@ -17,7 +17,10 @@ fun FaceItem(imageId: Int, textId: Int, face: Face, onChoosing: (Face) -> Unit) 
         modifier = Modifier.clickable { onChoosing(face) },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(painter = painterResource(id = imageId), contentDescription = "Image with id $imageId")
+        Image(
+            painter = painterResource(id = imageId),
+            contentDescription = "Image with id $imageId"
+        )
         Text(text = stringResource(id = textId))
     }
 }

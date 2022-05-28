@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.*
 private const val CHECK_APP_DELAY_MILLIS = 250L
 private const val CHECK_IN_APPS_OPENED_LAST_MILLIS = 1000 * 3600
 
-class CurrentAppChecker(private val context: Context, private val permissionChecker: PermissionChecker) {
+class CurrentAppChecker(
+    private val context: Context,
+    private val permissionChecker: PermissionChecker
+) {
 
     fun get(): Flow<String> = flow {
         while (true) {
@@ -31,19 +34,24 @@ class CurrentAppChecker(private val context: Context, private val permissionChec
         val mUsageStatsManager = context.getSystemService(Service.USAGE_STATS_SERVICE)
                 as UsageStatsManager
         val time = System.currentTimeMillis()
-        val usageEvents = mUsageStatsManager.queryEvents(time - CHECK_IN_APPS_OPENED_LAST_MILLIS, time)
+        val usageEvents =
+            mUsageStatsManager.queryEvents(time - CHECK_IN_APPS_OPENED_LAST_MILLIS, time)
         while (usageEvents.hasNextEvent()) {
             val event = UsageEvents.Event()
             usageEvents.getNextEvent(event)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 when (event.eventType) {
                     ACTIVITY_RESUMED -> pkgName = event.packageName
-                    ACTIVITY_PAUSED -> { if (event.packageName == pkgName) pkgName = null }
+                    ACTIVITY_PAUSED -> {
+                        if (event.packageName == pkgName) pkgName = null
+                    }
                 }
             } else {
                 when (event.eventType) {
                     MOVE_TO_FOREGROUND -> pkgName = event.packageName
-                    MOVE_TO_BACKGROUND -> { if (event.packageName == pkgName) pkgName = null }
+                    MOVE_TO_BACKGROUND -> {
+                        if (event.packageName == pkgName) pkgName = null
+                    }
                 }
             }
         }

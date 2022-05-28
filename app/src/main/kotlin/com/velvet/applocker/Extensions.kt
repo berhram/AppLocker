@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import com.velvet.applocker.infra.AppInfo
 import com.velvet.applocker.ui.composable.AppTheme
 import com.velvet.applocker.ui.composable.SystemUiSetup
-import com.velvet.applocker.ui.main.MainState
 
 fun ComponentActivity.setThemedContent(content: @Composable () -> Unit) {
     this.actionBar?.hide()
