@@ -12,7 +12,6 @@ import com.velvet.applocker.data.cache.overlay.OverlayCacheContract
 import com.velvet.applocker.infra.ValidationStatus
 import com.velvet.applocker.receiver.UnlockResultReceiver.Companion.APP_UNLOCKED
 import com.velvet.applocker.setThemedContent
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -27,7 +26,7 @@ class OverlayActivity : ComponentActivity() {
         setThemedContent {
             OverlayScreen(viewModel = getViewModel())
         }
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             cache.status.receiveAsFlow().collect {
                 when (it) {
                     ValidationStatus.SUCCESS -> {
@@ -36,17 +35,15 @@ class OverlayActivity : ComponentActivity() {
                         finish()
                     }
                     ValidationStatus.FAILURE_NO_PASSWORD_SET -> {
-                        setResult(Activity.RESULT_OK)
-                        finish()
                         Toast.makeText(
-                            applicationContext,
+                            this@OverlayActivity,
                             R.string.password_not_created,
                             Toast.LENGTH_LONG
                         ).show()
                     }
                     ValidationStatus.FAILURE_WRONG_PASSWORD -> {
                         Toast.makeText(
-                            applicationContext,
+                            this@OverlayActivity,
                             R.string.wrong_password,
                             Toast.LENGTH_LONG
                         ).show()

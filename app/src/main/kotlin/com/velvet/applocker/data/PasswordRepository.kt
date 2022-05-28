@@ -16,10 +16,11 @@ class PasswordRepository(
     }
     
     suspend fun checkPassword() {
+        val password = overlayCache.password.receive()
         if (passwordDao.isPasswordCreated() != 1) {
             overlayCache.status.send(ValidationStatus.FAILURE_NO_PASSWORD_SET)
         } else {
-            when (overlayCache.password.receive()) {
+            when (password) {
                 passwordDao.getPassword().password -> {
                     overlayCache.status.send(ValidationStatus.SUCCESS)
                 }
