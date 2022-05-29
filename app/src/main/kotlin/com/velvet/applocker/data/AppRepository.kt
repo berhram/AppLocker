@@ -20,7 +20,7 @@ class AppRepository(
     fun changeFace(newFace: Face) {
         for (face in Face.getDefaultFaces()) {
             packageManager.setComponentEnabledSetting(
-                ComponentName(appName, "${appName}.${newFace.name}"),
+                ComponentName(appName, "$appName${face.name}"),
                 if (newFace == face) {
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                 } else {

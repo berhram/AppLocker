@@ -17,22 +17,24 @@ data class Face(
     val name: String
 ) {
     companion object {
-        fun getDefaultFaces() = listOf(
-            Face(
-                textId = R.string.app_name,
-                iconId = R.drawable.launcher,
-                name = "ui.main.MainActivity"
-            ),
-            Face(
-                textId = R.string.app_name_fitness,
-                iconId = R.drawable.fitness,
-                name = "MainActivityFitnessAlias"
-            ),
-            Face(
-                textId = R.string.app_name_schedule,
-                iconId = R.drawable.schedule,
-                name = "MainActivityScheduleAlias"
-            )
+        fun getDefaultFaces() = listOf(getDefault(), getFitness(), getBusLy())
+
+        private fun getDefault() = Face(
+            textId = R.string.app_name,
+            iconId = R.drawable.launcher,
+            name = ".ui.main.MainActivity"
+        )
+
+        private fun getFitness() = Face(
+            textId = R.string.app_name_fitness,
+            iconId = R.drawable.fitness,
+            name = ".MainActivityFitness"
+        )
+
+        private fun getBusLy() = Face(
+            textId = R.string.app_name_schedule,
+            iconId = R.drawable.schedule,
+            name = ".MainActivitySchedule"
         )
     }
 }

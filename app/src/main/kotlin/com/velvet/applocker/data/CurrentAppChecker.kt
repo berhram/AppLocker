@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 private const val CHECK_APP_DELAY_MILLIS = 100L
-private const val CHECK_IN_APPS_OPENED_LAST_MILLIS = 1000 * 60 * 30
+private const val CHECK_IN_APPS_OPENED_LAST_MILLIS = 1000 * 60
 
 class CurrentAppChecker(
     private val context: Context,

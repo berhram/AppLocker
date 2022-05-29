@@ -48,7 +48,7 @@
         </activity>
 
         <activity-alias
-            android:name=".MainActivityScheduleAlias"
+            android:name=".MainActivitySchedule"
             android:exported="true"
             android:targetActivity=".ui.main.MainActivity"
             android:icon="@mipmap/ic_schedule"
@@ -64,7 +64,7 @@
         </activity-alias>
 
         <activity-alias
-            android:name=".MainActivityFitnessAlias"
+            android:name=".MainActivityFitness"
             android:exported="true"
             android:targetActivity=".ui.main.MainActivity"
             android:icon="@mipmap/ic_fitness"
