@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppLocker</string>
+    <string name="app_name_schedule">Автобусы</string>
+    <string name="app_name_fitness">Фитнес</string>
+    <string name="face_change_dialog_title">Внешний вид</string>
+    <string name="face_change_dialog_text">Чтобы обезопасить приложение от изменения настроек, выберите отличающийся от стандартного внешний вид приложения.</string>
+    <string name="icon_change_success">Внешний вид изменён!</string>
+    <string name="cancel">Отмена</string>
+    <string name="apply">Применить</string>
+    <string name="notification_permission_need_description">Нет необходимых разрешений!</string>
+    <string name="notification_running_title">AppLocker запущен</string>
+    <string name="instruction">Шаг 1: выдайте нужные разрешения.\nШаг 2: выберете приложения, которые нужно заблокировать.\nШаг 3: установите пароль.</string>
+    <string name="dev_contacts">Контакты разработчика:\nTelegram: @koshkodanya\nGithub: berhram\nПишите, если возникли вопросы!</string>
+    <string name="usage_stats_warning">Пожалуйста, дайте разрешение на доступ к истории использования приложений!</string>
+    <string name="new_password_enter">Новый пароль</string>
+    <string name="change_password_dialog_title">Новый пароль</string>
+    <string name="wrong_password">Неверный пароль!</string>
+    <string name="password_too_short">Пароль слишком короткий!</string>
+    <string name="password_not_created">Установите пароль или приложение не сможет работать!</string>
+    <string name="overlay_warning">Пожалуйста, дайте разрешение на отображение поверх других окон!</string>
+    <string name="too_long">Длина пароля не может быть более 8 символов!</string>
+    <string name="password_not_digits">Пароль должен содержать только цифры!</string>
+    <string name="change_password_dialog_text">Длина пароля может быть от 4 до 8 символов. Разрешены только цифры.</string>
+    <string name="welcome">Это бесплатное приложение с открытым исходным кодом, которое создано, чтобы ограничить насколько это возможно несанкционированный доступ к вашим приложениям. Чувствуйте себя свободно, критикуя приложение. Разработчик всегда открыт к вашим предложениям.</string>
+    <string name="proceed">Продолжить</string>
+    <string name="create_password_info">Создайте или поменяйте пароль используя кнопку ниже</string>
+    <string name="set_face_info">Поменяйте внешний вид приложения, используя кнопку ниже</string>
+</resources>
