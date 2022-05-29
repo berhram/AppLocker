@@ -26,7 +26,7 @@ fun PasswordChangeDialog(
                 Modifier
                     .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colors.background)
-                    .padding(MaterialTheme.spacing.small)
+                    .padding(MaterialTheme.spacing.medium)
             ) {
                 Text(
                     text = stringResource(id = R.string.change_password_dialog_title),

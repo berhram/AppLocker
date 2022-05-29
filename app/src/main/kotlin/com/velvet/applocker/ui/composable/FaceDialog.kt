@@ -28,7 +28,7 @@ fun FacesDialog(
             modifier = Modifier.clip(MaterialTheme.shapes.medium),
             color = MaterialTheme.colors.surface
         ) {
-            Column(Modifier.padding(MaterialTheme.spacing.small)) {
+            Column(Modifier.padding(MaterialTheme.spacing.medium)) {
                 Text(
                     text = stringResource(id = R.string.face_change_dialog_title),
                     style = MaterialTheme.typography.h4,

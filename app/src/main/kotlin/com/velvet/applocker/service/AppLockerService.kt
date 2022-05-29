@@ -19,7 +19,6 @@ import com.velvet.applocker.receiver.UnlockResultReceiver.Companion.APP_UNLOCKED
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
-private const val DELAY_MILLIS = 500
 private const val UNLOCKED_TIME_MILLIS = 1000 * 60 * 30
 
 class AppLockerService : Service() {
@@ -118,7 +117,6 @@ class AppLockerService : Service() {
     private fun onLockedAppForeground(lockedAppPackage: String) {
         if (
             (System.currentTimeMillis() - lockedAppsPackages[lockedAppPackage]!! >= UNLOCKED_TIME_MILLIS) &&
-            (System.currentTimeMillis() - lastInvocationTime >= DELAY_MILLIS) &&
             (permissionChecker.isOverlayPermissionGranted())
         ) {
             val intent = OverlayActivity.newIntent(applicationContext, lockedAppPackage)
