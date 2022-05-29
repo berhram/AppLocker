@@ -2,6 +2,7 @@ package com.velvet.applocker.ui.overlay
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -62,17 +63,23 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                 ) {
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(1) }) {
+                        onClick = { viewModel.enterDigit(1) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "1", style = MaterialTheme.typography.h6)
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(2) }) {
+                        onClick = { viewModel.enterDigit(2) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "2", style = MaterialTheme.typography.h6)
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(3) }) {
+                        onClick = { viewModel.enterDigit(3) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "3", style = MaterialTheme.typography.h6)
                     }
                 }
@@ -83,17 +90,23 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                 ) {
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(4) }) {
+                        onClick = { viewModel.enterDigit(4) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "4", style = MaterialTheme.typography.h6)
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(5) }) {
+                        onClick = { viewModel.enterDigit(5) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "5", style = MaterialTheme.typography.h6)
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(6) }) {
+                        onClick = { viewModel.enterDigit(6) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "6", style = MaterialTheme.typography.h6)
                     }
                 }
@@ -104,17 +117,23 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                 ) {
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(7) }) {
+                        onClick = { viewModel.enterDigit(7) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "7", style = MaterialTheme.typography.h6)
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(8) }) {
+                        onClick = { viewModel.enterDigit(8) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "8", style = MaterialTheme.typography.h6)
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(9) }) {
+                        onClick = { viewModel.enterDigit(9) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "9", style = MaterialTheme.typography.h6)
                     }
                 }
@@ -134,7 +153,9 @@ fun OverlayScreen(viewModel: OverlayViewModel) {
                     }
                     Button(
                         modifier = Modifier.size(buttonSize),
-                        onClick = { viewModel.enterDigit(0) }) {
+                        onClick = { viewModel.enterDigit(0) },
+                        shape = CircleShape
+                    ) {
                         Text(text = "0", style = MaterialTheme.typography.h6)
                     }
                     IconButton(
